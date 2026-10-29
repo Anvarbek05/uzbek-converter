@@ -1,0 +1,28 @@
+{
+    "name": "uzbek-converter",
+    "version": "1.0.0",
+    "description": "",
+    "main": "app.js",
+    "scripts": {
+        "start": "node server.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "depnode server.jsendencies": {
+        "adm-zip": "^0.6.1",
+        "express": "^5.3.0",
+        "express-fileupload": "^1.5.2",
+        "xml2js": "^0.6.2"
+    },
+    "dependencies": {
+        "adm-zip": "^0.6.1",
+        "express": "^5.3.0",
+        "express-fileupload": "^1.5.2",
+        "pdf-lib": "^1.17.1",
+        "pdf-parse": "^2.4.5",
+        "pdfkit": "^0.20.2"
+    }
+}

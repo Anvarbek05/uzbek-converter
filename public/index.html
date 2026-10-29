@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <!-- PDF.js Kutubxonasi (Brauzerda PDF matnlarini to'liq o'qish uchun) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexUz — Ögir Platformasi</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+
+<body class="dark-theme">
+    <div class="background-glow"></div>
+
+    <div class="app-container">
+        <!-- Header: NexUz chapda, Hujjat yuklash va Theme Toggle o'ngda -->
+        <header class="navbar">
+            <div class="logo-group">
+                <div class="logo">Nex<span>Uz</span></div>
+                <div class="badge">ÖĞIR PLATFORMASI</div>
+            </div>
+
+            <div class="header-right">
+                <input type="file" id="fileInput" accept=".pdf, .docx, .txt" hidden>
+                <button class="btn-file" onclick="document.getElementById('fileInput').click()">
+                    📁 Hujjat yuklash (PDF, DOCX, TXT)
+                </button>
+
+                <!-- Dark / Light Theme Toggle -->
+                <button id="themeToggleBtn" class="theme-toggle-btn" title="Mavzuni o'zgartirish">
+                    <span id="themeIcon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <div id="fileStatus" class="file-status-bar"></div>
+
+        <!-- Yo'nalish va Boshqaruv Qatori -->
+        <div class="top-controls-bar">
+            <div class="mode-select-group">
+                <label for="convertMode">Yo‘nalish:</label>
+                <select id="convertMode" class="custom-select">
+                    <option value="old_to_new">Eski Lotin / Kirill ➔ Yangi Lotin (Ğ, Ö, Ş, Ç)</option>
+                    <option value="new_to_old">Yangi Lotin ➔ Eski Lotin (G', O', Sh, Ch)</option>
+                    <option value="new_to_cyrillic">Yangi Lotin ➔ Kirill (Ғ, Ў, Ш, Ч)</option>
+                </select>
+                <button id="swapBtn" class="btn-swap-inline" title="Yo'nalishni almashtirish">⇄</button>
+            </div>
+        </div>
+
+        <!-- 2 ta Yonma-yon Matn Oynasi -->
+        <main class="converter-grid">
+            <!-- Chap: Kiruvchi Matn -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <span class="card-title">Kiruvchi Matn</span>
+                    <button id="clearBtn" class="btn-icon danger" title="Tozalash">🗑 Tozalash</button>
+                </div>
+                <textarea id="inputText" placeholder="Matnni shu yerga yozing yoki fayl yuklang..."></textarea>
+            </div>
+
+            <!-- O'ng: Natija -->
+            <div class="glass-card">
+                <div class="card-header">
+                    <span class="card-title">Natija</span>
+                    <div class="actions">
+                        <button id="copyBtn" class="btn-icon success">📋 Nusxalash</button>
+                        <div class="download-dropdown">
+                            <button class="btn-gradient">📥 Yuklab olish</button>
+                            <div class="dropdown-content">
+                                <a href="#" id="dlDocx">Word (.docx)</a>
+                                <a href="#" id="dlTxt">Text (.txt)</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <textarea id="outputText" readonly placeholder="Natija avtomatik ko'rinadi..."></textarea>
+            </div>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

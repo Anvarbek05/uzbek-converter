@@ -1,0 +1,235 @@
+const express = require('express');
+const fileUpload = require('express-fileupload');
+const AdmZip = require('adm-zip');
+const pdfParse = require('pdf-parse');
+const path = require('path');
+
+const app = express();
+app.use(express.static('public'));
+app.use(fileUpload());
+app.use(express.json());
+
+// 1. ESKI LOTIN / KIRILL -> YANGI LOTIN
+function convertToNewLatin(text) {
+    if (!text) return '';
+    let result = text.replace(/['‘`’]/g, "‘");
+
+    result = result
+        .replace(/(^|[\s\n\t,.\?!"'“«(])Е/g, '$1Ye').replace(/(^|[\s\n\t,.\?!"'“«(])е/g, '$1ye')
+        .replace(/([АEИОУЎЭЮЯаеиоуўэюя‘])Е/g, '$1Ye').replace(/([АEИОУЎЭЮЯаеиоуўэюя‘])е/g, '$1ye')
+        .replace(/Ғ/g, 'Ğ').replace(/ғ/g, 'ğ')
+        .replace(/Ў/g, 'Ö').replace(/ў/g, 'ö')
+        .replace(/Ш/g, 'Ş').replace(/ш/g, 'ş')
+        .replace(/Ч/g, 'Ç').replace(/ч/g, 'ç')
+        .replace(/Ё/g, 'Yo').replace(/ё/g, 'yo')
+        .replace(/Ю/g, 'Yu').replace(/ю/g, 'yu')
+        .replace(/Я/g, 'Ya').replace(/я/g, 'ya')
+        .replace(/Ц/g, 'Ts').replace(/ц/g, 'ts')
+        .replace(/Щ/g, 'Şç').replace(/щ/g, 'şç')
+        .replace(/А/g, 'A').replace(/а/g, 'a')
+        .replace(/Б/g, 'B').replace(/б/g, 'b')
+        .replace(/В/g, 'V').replace(/в/g, 'v')
+        .replace(/Г/g, 'G').replace(/г/g, 'g')
+        .replace(/Д/g, 'D').replace(/д/g, 'd')
+        .replace(/Е/g, 'E').replace(/е/g, 'e')
+        .replace(/Ж/g, 'J').replace(/ж/g, 'j')
+        .replace(/З/g, 'Z').replace(/з/g, 'z')
+        .replace(/И/g, 'I').replace(/и/g, 'i')
+        .replace(/Й/g, 'Y').replace(/й/g, 'y')
+        .replace(/К/g, 'K').replace(/к/g, 'k')
+        .replace(/Л/g, 'L').replace(/л/g, 'l')
+        .replace(/М/g, 'M').replace(/м/g, 'm')
+        .replace(/Н/g, 'N').replace(/н/g, 'n')
+        .replace(/О/g, 'O').replace(/о/g, 'o')
+        .replace(/П/g, 'P').replace(/п/g, 'p')
+        .replace(/Р/g, 'R').replace(/р/g, 'r')
+        .replace(/С/g, 'S').replace(/с/g, 's')
+        .replace(/Т/g, 'T').replace(/т/g, 't')
+        .replace(/У/g, 'U').replace(/у/g, 'u')
+        .replace(/Ф/g, 'F').replace(/ф/g, 'f')
+        .replace(/Х/g, 'X').replace(/х/g, 'x')
+        .replace(/Ҳ/g, 'H').replace(/ҳ/g, 'h')
+        .replace(/Э/g, 'E').replace(/э/g, 'e')
+        .replace(/Ъ/g, '‘').replace(/ъ/g, '‘')
+        .replace(/Ь/g, '').replace(/ь/g, '')
+        .replace(/SH/g, 'Ş').replace(/Sh/g, 'Ş').replace(/sh/g, 'ş')
+        .replace(/CH/g, 'Ç').replace(/Ch/g, 'Ç').replace(/ch/g, 'ç')
+        .replace(/G‘/g, 'Ğ').replace(/g‘/g, 'ğ')
+        .replace(/O‘/g, 'Ö').replace(/o‘/g, 'ö');
+
+    return result;
+}
+
+// 2. YANGI LOTIN -> ESKI LOTIN (Katta harflar to'g'rilangan mantiq)
+function convertToOldLatin(text) {
+    if (!text) return '';
+    let res = text;
+
+    // To'liq katta harflar holatlarini to'g'rilash (masalan: ŞAXS -> SHAXS)
+    res = res.replace(/Ş(?=[A-ZĞÖIİEOUÁÝÂÊÎÔÛDŽÇŞA-Z])/g, "SH");
+    res = res.replace(/Ç(?=[A-ZĞÖIİEOUÁÝÂÊÎÔÛDŽÇŞA-Z])/g, "CH");
+    res = res.replace(/Ğ(?=[A-ZĞÖIİEOUÁÝÂÊÎÔÛDŽÇŞA-Z])/g, "G‘");
+    res = res.replace(/Ö(?=[A-ZĞÖIİEOUÁÝÂÊÎÔÛDŽÇŞA-Z])/g, "O‘");
+
+    // Boshqa standart holatlar
+    return res
+        .replace(/Ğ/g, "G‘").replace(/ğ/g, "g‘")
+        .replace(/Ö/g, "O‘").replace(/ö/g, "o‘")
+        .replace(/Ş/g, "Sh").replace(/ş/g, "sh")
+        .replace(/Ç/g, "Ch").replace(/ç/g, "ch");
+}
+
+// 3. YANGI LOTIN -> KIRILL
+function convertToCyrillic(text) {
+    if (!text) return '';
+    let res = convertToOldLatin(text);
+
+    const map = {
+        'Ye': 'Е',
+        'ye': 'е',
+        'Yo': 'Ё',
+        'yo': 'ё',
+        'Yu': 'Ю',
+        'yu': 'ю',
+        'Ya': 'Я',
+        'ya': 'я',
+        'Ts': 'Ц',
+        'ts': 'ц',
+        'SH': 'Ш',
+        'Sh': 'Ш',
+        'sh': 'ш',
+        'CH': 'Ч',
+        'Ch': 'Ч',
+        'ch': 'ч',
+        'G‘': 'Ғ',
+        'g‘': 'ғ',
+        'O‘': 'Ў',
+        'o‘': 'ў',
+        'A': 'А',
+        'a': 'а',
+        'B': 'Б',
+        'b': 'б',
+        'V': 'В',
+        'v': 'в',
+        'G': 'Г',
+        'g': 'г',
+        'D': 'Д',
+        'd': 'д',
+        'E': 'Э',
+        'e': 'э',
+        'J': 'Ж',
+        'j': 'ж',
+        'Z': 'З',
+        'z': 'з',
+        'I': 'И',
+        'i': 'и',
+        'Y': 'Й',
+        'y': 'й',
+        'K': 'К',
+        'k': 'к',
+        'L': 'Л',
+        'l': 'л',
+        'M': 'М',
+        'm': 'м',
+        'N': 'Н',
+        'n': 'н',
+        'O': 'О',
+        'o': 'о',
+        'P': 'П',
+        'p': 'п',
+        'R': 'Р',
+        'r': 'р',
+        'S': 'С',
+        's': 'с',
+        'T': 'Т',
+        't': 'т',
+        'U': 'У',
+        'u': 'у',
+        'F': 'Ф',
+        'f': 'ф',
+        'X': 'Х',
+        'x': 'х',
+        'H': 'Ҳ',
+        'h': 'ҳ',
+        '‘': 'Ъ'
+    };
+
+    for (let k in map) {
+        res = res.replace(new RegExp(k, 'g'), map[k]);
+    }
+    return res;
+}
+
+function processConversion(text, mode) {
+    if (mode === 'new_to_old') return convertToOldLatin(text);
+    if (mode === 'new_to_cyrillic') return convertToCyrillic(text);
+    return convertToNewLatin(text);
+}
+
+app.post('/api/convert-text', (req, res) => {
+    const { text, mode } = req.body;
+    res.json({ result: processConversion(text, mode) });
+});
+
+app.post('/api/parse-file', async(req, res) => {
+    if (!req.files || !req.files.file) return res.status(400).send('Fayl yuklanmadi');
+
+    try {
+        const file = req.files.file;
+        const ext = path.extname(file.name).toLowerCase();
+        let text = '';
+
+        if (ext === '.txt') {
+            text = file.data.toString('utf-8');
+        } else if (ext === '.docx') {
+            const zip = new AdmZip(file.data);
+            let xml = zip.readAsText('word/document.xml');
+            text = xml.replace(/<[^>]+>/g, ' ');
+        } else if (ext === '.pdf') {
+            try {
+                const parsed = await pdfParse(file.data);
+                text = parsed.text;
+                if (!text.trim()) {
+                    return res.status(422).json({ error: 'PDF skanerlangan rasm ko‘rinishida. Matn topilmadi.' });
+                }
+            } catch (e) {
+                return res.status(422).json({ error: 'PDF fayl shifrlangan yoki o‘qib bo‘lmadi.' });
+            }
+        }
+
+        res.json({ text: text });
+    } catch (err) {
+        res.status(500).json({ error: 'Faylni o‘qishda xatolik yuz berdi' });
+    }
+});
+
+app.post('/api/download-file', (req, res) => {
+            const { text, format, filename } = req.body;
+            const baseName = filename ? filename.split('.')[0] : 'o_girilgan';
+
+            if (format === 'txt') {
+                res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+                res.setHeader('Content-Disposition', `attachment; filename="${baseName}.txt"`);
+                return res.send(Buffer.from(text, 'utf-8'));
+            }
+
+            if (format === 'docx') {
+                const zip = new AdmZip();
+                const xmlContent = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+        <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+            <w:body>
+                ${text.split('\n').map(p => `<w:p><w:r><w:t>${p}</w:t></w:r></w:p>`).join('')}
+            </w:body>
+        </w:document>`;
+        
+        zip.addFile('word/document.xml', Buffer.from(xmlContent, 'utf-8'));
+        zip.addFile('[Content_Types].xml', Buffer.from('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="xml" ContentType="application/xml"/><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'));
+
+        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        res.setHeader('Content-Disposition', `attachment; filename="${baseName}.docx"`);
+        return res.send(zip.toBuffer());
+    }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server ${PORT}-portda ishga tushdi`));
