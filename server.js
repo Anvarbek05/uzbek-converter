@@ -203,31 +203,54 @@ app.post('/api/parse-file', async(req, res) => {
     }
 });
 
-app.post('/api/download-file', (req, res) => {
-            const { text, format, filename } = req.body;
-            const baseName = filename ? filename.split('.')[0] : 'o_girilgan';
+const { Document, Packer, Paragraph, TextRun } = require('docx');
 
-            if (format === 'txt') {
-                res.setHeader('Content-Type', 'text/plain; charset=utf-8');
-                res.setHeader('Content-Disposition', `attachment; filename="${baseName}.txt"`);
-                return res.send(Buffer.from(text, 'utf-8'));
-            }
+// DOCX fayl yuklab olish API (100% ochiladigan standart Word hujjatini yaratish)
+app.post('/api/download-file', async(req, res) => {
+    const { text, format, filename } = req.body;
+    const baseName = filename ? filename.split('.')[0] : 'o_girilgan';
 
-            if (format === 'docx') {
-                const zip = new AdmZip();
-                const xmlContent = `<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-        <w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
-            <w:body>
-                ${text.split('\n').map(p => `<w:p><w:r><w:t>${p}</w:t></w:r></w:p>`).join('')}
-            </w:body>
-        </w:document>`;
-        
-        zip.addFile('word/document.xml', Buffer.from(xmlContent, 'utf-8'));
-        zip.addFile('[Content_Types].xml', Buffer.from('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="xml" ContentType="application/xml"/><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/></Types>'));
+    // 1. TXT formatida yuklash
+    if (format === 'txt') {
+        res.setHeader('Content-Type', 'text/plain; charset=utf-8');
+        res.setHeader('Content-Disposition', `attachment; filename="${baseName}.txt"`);
+        return res.send(Buffer.from(text, 'utf-8'));
+    }
 
-        res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-        res.setHeader('Content-Disposition', `attachment; filename="${baseName}.docx"`);
-        return res.send(zip.toBuffer());
+    // 2. DOCX formatida standart Word hujjatini yaratish
+    if (format === 'docx') {
+        try {
+            // Matnni abzaslar bo'yicha bo'lib, Word Paragraph obyektiga o'tkazish
+            const paragraphs = text.split('\n').map(line => {
+                return new Paragraph({
+                    children: [
+                        new TextRun({
+                            text: line,
+                            size: 24, // 12pt shrift
+                            font: 'Arial'
+                        })
+                    ]
+                });
+            });
+
+            // Hujjatni shakllantirish
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: paragraphs
+                }]
+            });
+
+            // Buffer holatiga o'tkazish
+            const buffer = await Packer.toBuffer(doc);
+
+            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+            res.setHeader('Content-Disposition', `attachment; filename="${baseName}.docx"`);
+            return res.send(buffer);
+        } catch (err) {
+            console.error(err);
+            return res.status(500).json({ error: 'DOCX faylini shakllantirishda xatolik yuz berdi' });
+        }
     }
 });
 
