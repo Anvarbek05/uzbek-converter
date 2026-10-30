@@ -15,18 +15,26 @@ function convertToNewLatin(text) {
     let result = text.replace(/['‘`’]/g, "‘");
 
     result = result
+        // So'z boshidagi va unlilardan keyingi Ye/ye qoidasi
         .replace(/(^|[\s\n\t,.\?!"'“«(])Е/g, '$1Ye').replace(/(^|[\s\n\t,.\?!"'“«(])е/g, '$1ye')
         .replace(/([АEИОУЎЭЮЯаеиоуўэюя‘])Е/g, '$1Ye').replace(/([АEИОУЎЭЮЯаеиоуўэюя‘])е/g, '$1ye')
-        .replace(/Ғ/g, 'Ğ').replace(/ғ/g, 'ğ')
+
+    // Kirillchada maxsus Uzbek harflari (Ğ, Ö, Ş, Ç, Q)[cite: 9]
+    .replace(/Ғ/g, 'Ğ').replace(/ғ/g, 'ğ')
         .replace(/Ў/g, 'Ö').replace(/ў/g, 'ö')
         .replace(/Ш/g, 'Ş').replace(/ш/g, 'ş')
         .replace(/Ч/g, 'Ç').replace(/ч/g, 'ç')
-        .replace(/Ё/g, 'Yo').replace(/ё/g, 'yo')
+        .replace(/Қ/g, 'Q').replace(/қ/g, 'q') // <-- Қ / қ harfi qo'shildi!
+
+    // Murakkab va qo'shaloq harflar
+    .replace(/Ё/g, 'Yo').replace(/ё/g, 'yo')
         .replace(/Ю/g, 'Yu').replace(/ю/g, 'yu')
         .replace(/Я/g, 'Ya').replace(/я/g, 'ya')
         .replace(/Ц/g, 'Ts').replace(/ц/g, 'ts')
         .replace(/Щ/g, 'Şç').replace(/щ/g, 'şç')
-        .replace(/А/g, 'A').replace(/а/g, 'a')
+
+    // Standart Kirill harflari
+    .replace(/А/g, 'A').replace(/а/g, 'a')
         .replace(/Б/g, 'B').replace(/б/g, 'b')
         .replace(/В/g, 'V').replace(/в/g, 'v')
         .replace(/Г/g, 'G').replace(/г/g, 'g')
@@ -52,14 +60,15 @@ function convertToNewLatin(text) {
         .replace(/Э/g, 'E').replace(/э/g, 'e')
         .replace(/Ъ/g, '‘').replace(/ъ/g, '‘')
         .replace(/Ь/g, '').replace(/ь/g, '')
-        .replace(/SH/g, 'Ş').replace(/Sh/g, 'Ş').replace(/sh/g, 'ş')
+
+    // Eski lotin alifbosidan yangisiga o'girish qoidalari (Ğ, Ö, Ş, Ç)[cite: 9]
+    .replace(/SH/g, 'Ş').replace(/Sh/g, 'Ş').replace(/sh/g, 'ş')
         .replace(/CH/g, 'Ç').replace(/Ch/g, 'Ç').replace(/ch/g, 'ç')
         .replace(/G‘/g, 'Ğ').replace(/g‘/g, 'ğ')
         .replace(/O‘/g, 'Ö').replace(/o‘/g, 'ö');
 
     return result;
 }
-
 // 2. YANGI LOTIN -> ESKI LOTIN (Katta harflar to'g'rilangan mantiq)
 function convertToOldLatin(text) {
     if (!text) return '';
