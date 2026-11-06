@@ -8,6 +8,7 @@ const fileStatus = $('fileStatus');
 let originalDocx = null;
 let conversionTimer = null;
 let lastSavedValue = '';
+let conversionRequestId = 0;
 
 const SPECIAL = /[ĞğÖöŞşÇç]/;
 const historyKey = 'nexuz-conversion-history-v1';
@@ -33,6 +34,7 @@ function renderResult(value) {
 }
 async function triggerConversion(save = true) {
   const source = inputText.value;
+  const requestId = ++conversionRequestId;
   updateCounters();
   if (!source.trim()) {
     renderResult('');
@@ -45,6 +47,7 @@ async function triggerConversion(save = true) {
       body: JSON.stringify({text:source, mode:convertMode.value})
     });
     const data = await response.json();
+    if (requestId !== conversionRequestId) return;
     if (!response.ok) throw new Error(data.error || 'Konvertatsiya amalga oshmadi.');
     renderResult(data.result);
     if (save) scheduleHistorySave();
@@ -102,6 +105,7 @@ function renderHistory() {
     const item = getHistory()[Number(button.dataset.history)];
     if (!item) return;
     inputText.value = item.source;
+    originalDocx = null;
     convertMode.value = item.mode;
     renderResult(item.result);
     fileStatus.textContent = 'Tarixdan tiklandi';
@@ -126,7 +130,10 @@ function setTheme(theme) {
 $('themeToggleBtn').addEventListener('click', () => setTheme(document.body.classList.contains('light-theme') ? 'dark' : 'light'));
 setTheme(localStorage.getItem(themeKey) || 'dark');
 
-inputText.addEventListener('input', () => triggerConversion());
+inputText.addEventListener('input', () => {
+  if (originalDocx) originalDocx = null; // Edited text no longer matches the uploaded Word document.
+  triggerConversion();
+});
 convertMode.addEventListener('change', () => triggerConversion());
 $('uploadBtn').addEventListener('click', () => fileInput.click());
 fileInput.addEventListener('change', async (event) => {
@@ -149,6 +156,7 @@ fileInput.addEventListener('change', async (event) => {
 });
 
 $('clearBtn').addEventListener('click', () => {
+  conversionRequestId++;
   inputText.value = '';
   renderResult('');
   fileInput.value = '';
@@ -163,6 +171,7 @@ $('swapBtn').addEventListener('click', () => {
   const map = {old_to_new:'new_to_old',cyrillic_to_new:'new_to_cyrillic',new_to_old:'old_to_new',new_to_cyrillic:'cyrillic_to_new'};
   convertMode.value = map[convertMode.value] || 'old_to_new';
   const source = inputText.value;
+  originalDocx = null;
   inputText.value = outputText.value;
   renderResult(source);
   triggerConversion();
