@@ -1,210 +1,313 @@
-const inputText = document.getElementById('inputText');
-const outputText = document.getElementById('outputText');
-const convertMode = document.getElementById('convertMode');
-const swapBtn = document.getElementById('swapBtn');
-const clearBtn = document.getElementById('clearBtn');
-const copyBtn = document.getElementById('copyBtn');
-const fileInput = document.getElementById('fileInput');
-const fileStatus = document.getElementById('fileStatus');
-const dlDocx = document.getElementById('dlDocx');
-const dlTxt = document.getElementById('dlTxt');
-const themeToggleBtn = document.getElementById('themeToggleBtn');
-const themeIcon = document.getElementById('themeIcon');
+const $ = (id) => document.getElementById(id);
+const inputText = $('inputText');
+const outputText = $('outputText');
+const outputPreview = $('outputPreview');
+const convertMode = $('convertMode');
+const fileInput = $('fileInput');
+const fileStatus = $('fileStatus');
+let originalDocx = null;
+let conversionTimer = null;
+let lastSavedValue = '';
+let conversionRequestId = 0;
 
-// PDF.js worker sozlamasi
-pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+const SPECIAL = /[ĞğÖöŞşÇç]/;
+const historyKey = 'nexuz-conversion-history-v1';
+const themeKey = 'nexuz-theme';
 
-// Fayl yuklanganda o'qish va transliteratsiya qilish
-fileInput.addEventListener('change', async(e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    fileStatus.textContent = '⏳ Fayl o‘qilmoqda: ' + file.name;
-    const ext = file.name.split('.').pop().toLowerCase();
-
-    // 1. PDF FAYLLAR UCHUN (Brauzerda xatosiz o'qish)
-    if (ext === 'pdf') {
-        try {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
-            let fullText = '';
-
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const textContent = await page.getTextContent();
-                const pageText = textContent.items.map(item => item.str).join(' ');
-                fullText += pageText + '\n\n';
-            }
-
-            if (!fullText.trim()) {
-                alert("PDF fayl skanerlangan rasm ko'rinishida yoki matn topilmadi.");
-                fileStatus.textContent = '❌ Matn topilmadi';
-                return;
-            }
-
-            inputText.value = fullText;
-            fileStatus.textContent = '✅ ' + file.name + ' (PDF o‘qildi)';
-            triggerConversion();
-        } catch (error) {
-            console.error(error);
-            alert("PDF faylini o‘qishda xatolik yuz berdi.");
-            fileStatus.textContent = '❌ Xatolik';
-        }
-    }
-    // 2. DOCX VA TXT FAYLLAR UCHUN (Server orqali)
-    else {
-        const formData = new FormData();
-        formData.append('file', file);
-
-        const res = await fetch('/api/parse-file', {
-            method: 'POST',
-            body: formData
-        });
-
-        const data = await res.json();
-
-        if (res.ok) {
-            inputText.value = data.text;
-            fileStatus.textContent = '✅ ' + file.name;
-            triggerConversion();
-        } else {
-            alert(data.error || "Faylni o‘qishda xatolik yuz berdi!");
-            fileStatus.textContent = '';
-        }
-    }
-});
-// 1. Dark / Light Mode Switcher
-themeToggleBtn.addEventListener('click', () => {
-    if (document.body.classList.contains('dark-theme')) {
-        document.body.classList.remove('dark-theme');
-        document.body.classList.add('light-theme');
-        themeIcon.textContent = '☀️';
-    } else {
-        document.body.classList.remove('light-theme');
-        document.body.classList.add('dark-theme');
-        themeIcon.textContent = '🌙';
-    }
-});
-
-// 2. Auto-Resize Textarea
-function autoResize(el) {
-    el.style.height = 'auto';
-    el.style.height = Math.max(380, el.scrollHeight) + 'px';
+function escapeHtml(value) {
+  return value.replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
-
-// 3. Real time conversion
-async function triggerConversion() {
-    autoResize(inputText);
-
-    if (!inputText.value.trim()) {
-        outputText.value = '';
-        autoResize(outputText);
-        return;
-    }
-
-    const res = await fetch('/api/convert-text', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            text: inputText.value,
-            mode: convertMode.value
-        })
-    });
-
-    const data = await res.json();
-    outputText.value = data.result;
-    autoResize(outputText);
+function highlightOutput(value) {
+  if (!value) return '<span class="empty-state">Natija shu yerda ko‘rinadi...</span>';
+  return Array.from(value).map(char => SPECIAL.test(char)
+    ? '<span class="changed-letter">' + escapeHtml(char) + '</span>'
+    : escapeHtml(char)).join('');
 }
-
-inputText.addEventListener('input', triggerConversion);
-convertMode.addEventListener('change', triggerConversion);
-
-// Swap yo'nalish
-swapBtn.addEventListener('click', () => {
-    if (convertMode.value === 'old_to_new') {
-        convertMode.value = 'new_to_old';
-    } else {
-        convertMode.value = 'old_to_new';
-    }
-    triggerConversion();
-});
-
-// Fayl yuklash
-fileInput.addEventListener('change', async(e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    fileStatus.textContent = '⏳ Fayl o‘qilmoqda: ' + file.name;
-
-    const formData = new FormData();
-    formData.append('file', file);
-
-    const res = await fetch('/api/parse-file', {
-        method: 'POST',
-        body: formData
-    });
-
-    const data = await res.json();
-
-    if (res.ok) {
-        inputText.value = data.text;
-        fileStatus.textContent = '✅ Fayl muvaffaqiyatli yuklandi: ' + file.name;
-        triggerConversion();
-    } else {
-        alert(data.error || "Faylni o‘qishda xatolik yuz berdi!");
-        fileStatus.textContent = '';
-    }
-});
-
-// Tozalash
-clearBtn.addEventListener('click', () => {
-    inputText.value = '';
-    outputText.value = '';
-    fileInput.value = '';
-    fileStatus.textContent = '';
-    autoResize(inputText);
-    autoResize(outputText);
-});
-
-// Nusxalash
-copyBtn.addEventListener('click', () => {
-    if (outputText.value) {
-        navigator.clipboard.writeText(outputText.value);
-        alert('Nusxalandi!');
-    }
-});
-
-// Yuklab olish
-async function downloadFile(format) {
-    if (!outputText.value) {
-        alert("Yuklab olish uchun matn mavjud emas!");
-        return;
-    }
-
-    const res = await fetch('/api/download-file', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-            text: outputText.value,
-            format: format,
-            filename: fileInput.files[0] ? fileInput.files[0].name : 'matn'
-        })
-    });
-
-    if (res.ok) {
-        const blob = await res.blob();
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = `o_girilgan.${format}`;
-        link.click();
-    }
+function updateCounters() {
+  $('inputCount').textContent = inputText.value.length.toLocaleString('uz-UZ') + ' belgi';
+  $('outputCount').textContent = outputText.value.length.toLocaleString('uz-UZ') + ' belgi';
 }
+function renderResult(value) {
+  outputText.value = value || '';
+  outputPreview.innerHTML = highlightOutput(outputText.value);
+  updateCounters();
+}
+async function triggerConversion(save = true) {
+  const source = inputText.value;
+  const requestId = ++conversionRequestId;
+  updateCounters();
+  if (!source.trim()) {
+    renderResult('');
+    return;
+  }
+  try {
+    const response = await fetch('/api/convert-text', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({text:source, mode:convertMode.value})
+    });
+    const data = await response.json();
+    if (requestId !== conversionRequestId) return;
+    if (!response.ok) throw new Error(data.error || 'Konvertatsiya amalga oshmadi.');
+    renderResult(data.result);
+    if (save) scheduleHistorySave();
+  } catch (error) {
+    fileStatus.textContent = '⚠ ' + error.message;
+  }
+}
+function scheduleHistorySave() {
+  clearTimeout(conversionTimer);
+  conversionTimer = setTimeout(() => {
+    const historySignature = inputText.value + '|' + convertMode.value;
+    if (inputText.value.trim() && outputText.value && historySignature !== lastSavedValue) {
+      saveHistory(inputText.value, outputText.value, convertMode.value);
+      lastSavedValue = historySignature;
+    }
+  }, 650);
+}
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem(historyKey) || '[]'); }
+  catch { return []; }
+}
+function saveHistory(source, result, mode) {
+  const items = getHistory();
+  items.unshift({source, result, mode, date:new Date().toISOString()});
+  const unique = items.filter((item, index) => index === 0 || item.source !== source || item.mode !== mode).slice(0, 12);
+  localStorage.setItem(historyKey, JSON.stringify(unique));
+  renderHistory();
+}
+function renderHistory() {
+  let panel = $('historyPanel');
+  if (!panel) {
+    panel = document.createElement('section');
+    panel.id = 'historyPanel';
+    panel.className = 'history-panel';
+    panel.innerHTML = '<div class="history-head"><div><span class="panel-kicker">BRAUZER TARIXI</span><h3>Oxirgi konvertatsiyalar</h3></div><button id="clearHistoryBtn" class="text-button">Tarixni tozalash</button></div><div id="historyItems" class="history-items"></div>';
+    $('converter').appendChild(panel);
+    $('clearHistoryBtn').addEventListener('click', () => {
+      localStorage.removeItem(historyKey);
+      lastSavedValue = '';
+      renderHistory();
+    });
+  }
+  const target = $('historyItems');
+  const items = getHistory();
+  if (!items.length) {
+    target.innerHTML = '<span class="history-empty">Hali saqlangan konvertatsiyalar yo‘q.</span>';
+    return;
+  }
+  target.innerHTML = items.map((item, index) => {
+    const preview = escapeHtml(item.source.replace(/\s+/g,' ').slice(0,95));
+    const date = new Date(item.date).toLocaleString('uz-UZ',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    return '<button class="history-item" data-history="' + index + '"><span>' + preview + (item.source.length > 95 ? '…' : '') + '</span><small>' + date + '</small></button>';
+  }).join('');
+  target.querySelectorAll('[data-history]').forEach(button => button.addEventListener('click', () => {
+    const item = getHistory()[Number(button.dataset.history)];
+    if (!item) return;
+    inputText.value = item.source;
+    originalDocx = null;
+    convertMode.value = item.mode;
+    renderResult(item.result);
+    fileStatus.textContent = 'Tarixdan tiklandi';
+    $('converter').scrollIntoView({behavior:'smooth',block:'start'});
+  }));
+}
+async function copyText(value, label) {
+  if (!value) return;
+  try {
+    await navigator.clipboard.writeText(value);
+    fileStatus.textContent = '✓ ' + label + ' nusxalandi';
+  } catch {
+    fileStatus.textContent = 'Nusxalash uchun brauzer ruxsati kerak.';
+  }
+}
+function setTheme(theme) {
+  document.body.classList.toggle('light-theme', theme === 'light');
+  document.body.classList.toggle('dark-theme', theme !== 'light');
+  $('themeIcon').textContent = theme === 'light' ? '☾' : '☼';
+  localStorage.setItem(themeKey, theme);
+}
+$('themeToggleBtn').addEventListener('click', () => setTheme(document.body.classList.contains('light-theme') ? 'dark' : 'light'));
+setTheme(localStorage.getItem(themeKey) || 'dark');
 
-dlDocx.addEventListener('click', (e) => {
-    e.preventDefault();
-    downloadFile('docx');
+inputText.addEventListener('input', () => {
+  if (originalDocx) originalDocx = null; // Edited text no longer matches the uploaded Word document.
+  triggerConversion();
 });
-dlTxt.addEventListener('click', (e) => {
-    e.preventDefault();
-    downloadFile('txt');
+convertMode.addEventListener('change', () => triggerConversion());
+$('uploadBtn').addEventListener('click', () => fileInput.click());
+fileInput.addEventListener('change', async (event) => {
+  const file = event.target.files && event.target.files[0];
+  if (!file) return;
+  fileStatus.textContent = 'Hujjat o‘qilmoqda: ' + file.name;
+  originalDocx = file.name.toLowerCase().endsWith('.docx') ? file : null;
+  try {
+    const form = new FormData();
+    form.append('file', file);
+    const response = await fetch('/api/parse-file', {method:'POST',body:form});
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'Faylni o‘qib bo‘lmadi.');
+    inputText.value = data.text || '';
+    fileStatus.textContent = '✓ Yuklandi: ' + file.name + (originalDocx ? ' · Word tuzilmasi saqlanadi' : '');
+    await triggerConversion();
+  } catch (error) {
+    fileStatus.textContent = '⚠ ' + error.message;
+  }
 });
+
+$('clearBtn').addEventListener('click', () => {
+  conversionRequestId++;
+  inputText.value = '';
+  renderResult('');
+  fileInput.value = '';
+  originalDocx = null;
+  fileStatus.textContent = '';
+  lastSavedValue = '';
+});
+$('copyInputBtn').addEventListener('click', () => copyText(inputText.value, 'Kirish matni'));
+$('copyBtn').addEventListener('click', () => copyText(outputText.value, 'Natija'));
+
+$('swapBtn').addEventListener('click', () => {
+  const map = {old_to_new:'new_to_old',cyrillic_to_new:'new_to_cyrillic',new_to_old:'old_to_new',new_to_cyrillic:'cyrillic_to_new'};
+  convertMode.value = map[convertMode.value] || 'old_to_new';
+  const source = inputText.value;
+  originalDocx = null;
+  inputText.value = outputText.value;
+  renderResult(source);
+  triggerConversion();
+});
+
+async function downloadBlob(response, filename) {
+  if (!response.ok) {
+    let message = 'Fayl tayyorlanmadi.';
+    try { message = (await response.json()).error || message; } catch {}
+    throw new Error(message);
+  }
+  const blob = await response.blob();
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1500);
+}
+async function downloadTextFile(format) {
+  if (!outputText.value.trim()) return fileStatus.textContent = 'Avval matn kiriting.';
+  fileStatus.textContent = format.toUpperCase() + ' tayyorlanmoqda...';
+  try {
+    if (format === 'docx' && originalDocx) {
+      const form = new FormData();
+      form.append('file', originalDocx);
+      form.append('mode', convertMode.value === 'cyrillic_to_new' ? 'old_to_new' : convertMode.value);
+      const response = await fetch('/api/convert-docx',{method:'POST',body:form});
+      await downloadBlob(response, originalDocx.name.replace(/\.docx$/i,'') + '_nexuz.docx');
+    } else {
+      const response = await fetch('/api/download-file',{
+        method:'POST',headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({text:outputText.value,format,filename:originalDocx ? originalDocx.name : 'matn'})
+      });
+      await downloadBlob(response, 'nexuz_natija.' + format);
+    }
+    fileStatus.textContent = '✓ Fayl yuklab olindi';
+  } catch (error) { fileStatus.textContent = '⚠ ' + error.message; }
+}
+$('dlDocx').addEventListener('click', () => downloadTextFile('docx'));
+$('dlTxt').addEventListener('click', () => downloadTextFile('txt'));
+$('dlPdf').addEventListener('click', async () => {
+  if (!outputText.value.trim()) return fileStatus.textContent = 'Avval matn kiriting.';
+  if (typeof html2pdf !== 'function') return fileStatus.textContent = 'PDF kutubxonasi yuklanmadi. Internet aloqasini tekshiring.';
+  fileStatus.textContent = 'PDF tayyorlanmoqda...';
+  const paper = document.createElement('div');
+  paper.style.cssText = 'padding:36px;background:#fff;color:#171226;font-family:Arial,sans-serif;font-size:12pt;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;width:720px';
+  paper.textContent = outputText.value;
+  try {
+    await html2pdf().set({margin:14,filename:'nexuz_natija.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(paper).save();
+    fileStatus.textContent = '✓ PDF yuklab olindi';
+  } catch (error) { fileStatus.textContent = 'PDF yaratishda xatolik yuz berdi.'; }
+});
+$('dlTelegram').addEventListener('click', () => {
+  if (!outputText.value.trim()) return fileStatus.textContent = 'Avval matn kiriting.';
+  copyText('*NexUz orqali o‘girilgan matn*\n\n' + outputText.value, 'Telegram matni');
+});
+
+$('shareBtn').addEventListener('click', async () => {
+  if (!outputText.value.trim()) return $('shareStatus').textContent = 'Ulashish uchun avval matn kiriting.';
+  const payload = JSON.stringify({text:inputText.value,mode:convertMode.value});
+  const encoded = btoa(unescape(encodeURIComponent(payload)));
+  const url = location.origin + location.pathname + '#share=' + encoded;
+  try {
+    await navigator.clipboard.writeText(url);
+    $('shareStatus').textContent = 'Havola nusxalandi. Uni yuborgan odam matnni NexUz’da ochishi mumkin.';
+  } catch {
+    $('shareStatus').textContent = url;
+  }
+});
+function loadSharedText() {
+  const match = location.hash.match(/(?:^#|&)share=([^&]+)/);
+  if (!match) return;
+  try {
+    const payload = JSON.parse(decodeURIComponent(escape(atob(match[1]))));
+    if (payload.text) {
+      inputText.value = payload.text;
+      convertMode.value = payload.mode || 'old_to_new';
+      triggerConversion(false);
+      $('shareStatus').textContent = 'Ulashilgan matn ochildi.';
+    }
+  } catch { $('shareStatus').textContent = 'Ulashish havolasi yaroqsiz.'; }
+}
+loadSharedText();
+
+// Daily letter card
+const letters = [
+  {letter:'Ğ',title:'G‘ → Ğ',description:'“G‘alaba” so‘zidagi G‘ harfi yangi yozuvda Ğ shaklida yoziladi.'},
+  {letter:'Ö',title:'O‘ → Ö',description:'“O‘zbekiston” so‘zidagi O‘ harfi yangi yozuvda Ö shaklida yoziladi.'},
+  {letter:'Ş',title:'Sh → Ş',description:'“Shahar” so‘zidagi Sh harfi yangi yozuvda Ş shaklida yoziladi.'},
+  {letter:'Ç',title:'Ch → Ç',description:'“Chiroy” so‘zidagi Ch harfi yangi yozuvda Ç shaklida yoziladi.'}
+];
+let dailyIndex = (Math.floor(Date.now()/86400000) % letters.length);
+function renderDaily() {
+  const item = letters[dailyIndex];
+  $('dailyLetter').textContent = item.letter;
+  $('dailyTitle').textContent = item.title;
+  $('dailyDescription').textContent = item.description;
+}
+$('nextLetterBtn').addEventListener('click', () => { dailyIndex = (dailyIndex + 1) % letters.length; renderDaily(); });
+renderDaily();
+
+// Mini quiz
+const questions = [
+  {q:'“Sh” harfining yangi shakli qaysi?',options:['Ş','Ç','Ğ','Ö'],answer:'Ş'},
+  {q:'“G‘” harfi yangi alifboda qanday yoziladi?',options:['Ö','Ğ','Ş','Ç'],answer:'Ğ'},
+  {q:'“O‘” harfining yangi shaklini toping.',options:['Ç','Ş','Ğ','Ö'],answer:'Ö'},
+  {q:'“Ch” harfi yangi alifboda qaysi belgi bilan yoziladi?',options:['Ğ','Ö','Ç','Ş'],answer:'Ç'}
+];
+let questionIndex = 0;
+let answered = false;
+function renderQuestion() {
+  const q = questions[questionIndex];
+  $('quizProgress').textContent = (questionIndex+1) + ' / ' + questions.length;
+  $('quizQuestion').textContent = q.q;
+  $('quizFeedback').textContent = '';
+  $('nextQuestionBtn').disabled = true;
+  $('nextQuestionBtn').textContent = questionIndex === questions.length-1 ? 'Qayta boshlash ↻' : 'Keyingi savol →';
+  answered = false;
+  $('quizOptions').innerHTML = q.options.map(option => '<button class="quiz-option" type="button" data-answer="' + option + '">' + option + '</button>').join('');
+  $('quizOptions').querySelectorAll('[data-answer]').forEach(button => button.addEventListener('click', () => {
+    if (answered) return;
+    answered = true;
+    const correct = button.dataset.answer === q.answer;
+    button.classList.add(correct ? 'correct' : 'wrong');
+    $('quizOptions').querySelectorAll('[data-answer]').forEach(option => {
+      option.disabled = true;
+      if (option.dataset.answer === q.answer) option.classList.add('correct');
+    });
+    $('quizFeedback').textContent = correct ? 'To‘g‘ri! Barakalla.' : 'To‘g‘ri javob: ' + q.answer;
+    $('nextQuestionBtn').disabled = false;
+  }));
+}
+$('nextQuestionBtn').addEventListener('click', () => { questionIndex = (questionIndex + 1) % questions.length; renderQuestion(); });
+renderQuestion();
+renderHistory();
+updateCounters();

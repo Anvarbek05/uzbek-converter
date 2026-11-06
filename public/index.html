@@ -1,87 +1,1229 @@
 <!DOCTYPE html>
-<html lang="uz">
+<html lang="uz" data-theme="dark">
 
 <head>
-    <!-- PDF.js Kutubxonasi (Brauzerda PDF matnlarini to'liq o'qish uchun) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexUz — Ögir Platformasi</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>NexUz — yangi o‘zbek alifbosiga o‘giring</title>
+    <meta name="description" content="Kirill yoki eski lotin matnini yangi lotin alifbosiga (Ğ, Ö, Ş, Ç) o‘giring. PDF, DOCX va TXT hujjatlar bilan ishlaydi.">
+
+    <script>
+        (function() {
+            var t;
+            try { t = localStorage.getItem('nexuz-theme'); } catch (e) {}
+            if (!t) { t = (window.matchMedia && matchMedia('(prefers-color-scheme: light)').matches) ? 'light' : 'dark'; }
+            document.documentElement.setAttribute('data-theme', t);
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500..800&family=Manrope:wght@400..800&display=swap" rel="stylesheet">
+
+    <style>
+        /* =====================================================
+           RANGLAR — 60 / 20 / 10 qoidasi
+           60%  --c60  : sahifaning asosiy foni (lazurit ko‘k / sovuq oq)
+           20%  --c20  : ikkinchi rang (feruza koshin): natija paneli, kitob o‘ng sahifasi, imkoniyatlar bandi
+           10%  --c10  : urg‘u (oltin): asosiy tugma, yangi harflar, tanlangan juftlik
+           ===================================================== */
+        :root {
+            --serif: 'Literata', Georgia, 'Times New Roman', serif;
+            --sans: 'Manrope', system-ui, -apple-system, 'Segoe UI', sans-serif;
+            --c20: #1FB5A8;
+            --c10: #F6BE3F;
+            --on-accent: #07183F;
+            --gutter: clamp(20px, 5vw, 56px);
+            --maxw: 1200px;
+            --section-y: clamp(72px, 10vw, 136px);
+        }
+
+        :root[data-theme="dark"] {
+            --c60: #0E2150;
+            --c60-raise: #162B66;
+            --ink: #EAF2F5;
+            --ink-dim: #B3C3DA;
+            --line: rgba(234, 242, 245, 0.16);
+            --c20-text: #3FD0C3;
+            --ghost: rgba(234, 242, 245, 0.10);
+            color-scheme: dark;
+        }
+
+        :root[data-theme="light"] {
+            --c60: #EDF4F6;
+            --c60-raise: #FFFFFF;
+            --ink: #0E2150;
+            --ink-dim: #44567E;
+            --line: rgba(14, 33, 80, 0.16);
+            --c20-text: #0A7A72;
+            --ghost: rgba(14, 33, 80, 0.10);
+            color-scheme: light;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            scroll-padding-top: 84px;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            html {
+                scroll-behavior: auto;
+            }
+        }
+
+        body {
+            margin: 0;
+            background: var(--c60);
+            color: var(--ink);
+            font-family: var(--sans);
+            font-size: 1.0625rem;
+            line-height: 1.6;
+            transition: background-color .3s, color .3s;
+        }
+
+        h1,
+        h2,
+        h3,
+        p,
+        ul {
+            margin: 0;
+        }
+
+        ul {
+            padding: 0;
+            list-style: none;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        :focus-visible {
+            outline: 3px solid var(--c10);
+            outline-offset: 3px;
+        }
+
+        .wrap {
+            width: 100%;
+            max-width: calc(var(--maxw) + var(--gutter) * 2);
+            margin: 0 auto;
+            padding: 0 var(--gutter);
+        }
+
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            overflow: hidden;
+            clip: rect(0 0 0 0);
+            white-space: nowrap;
+        }
+
+        /* ---------- Tugmalar ---------- */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: .85rem 1.5rem;
+            border-radius: 10px;
+            font: inherit;
+            font-weight: 800;
+            text-decoration: none;
+            border: 1.5px solid transparent;
+            cursor: pointer;
+            transition: transform .18s, background-color .18s, border-color .18s;
+        }
+
+        .btn-gold {
+            background: var(--c10);
+            color: var(--on-accent);
+        }
+
+        .btn-gold:hover {
+            transform: translateY(-2px);
+        }
+
+        .btn-gold:active {
+            transform: translateY(0);
+        }
+
+        .btn-ghost {
+            border-color: var(--ink-dim);
+            color: var(--ink);
+        }
+
+        .btn-ghost:hover {
+            border-color: var(--ink);
+        }
+
+        .btn-sm {
+            padding: .55rem 1.05rem;
+            font-size: .95rem;
+        }
+
+        .btn-lg {
+            padding: 1.05rem 2rem;
+            font-size: 1.125rem;
+        }
+
+        /* ---------- Navbar ---------- */
+        .nav {
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            background: var(--c60);
+            background: color-mix(in srgb, var(--c60) 88%, transparent);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--line);
+        }
+
+        .nav-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            height: 68px;
+        }
+
+        .logo {
+            font-family: var(--serif);
+            font-weight: 800;
+            font-size: 1.6rem;
+            letter-spacing: -.01em;
+            text-decoration: none;
+        }
+
+        .logo span {
+            color: var(--c20-text);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+            margin-left: auto;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            font-weight: 600;
+            font-size: .98rem;
+            color: var(--ink-dim);
+            transition: color .18s;
+        }
+
+        .nav-links a:hover {
+            color: var(--ink);
+        }
+
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-btn {
+            width: 42px;
+            height: 42px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            border: 1.5px solid var(--line);
+            background: transparent;
+            color: var(--ink);
+            cursor: pointer;
+            transition: border-color .18s;
+        }
+
+        .icon-btn:hover {
+            border-color: var(--ink-dim);
+        }
+
+        .icon-btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        :root[data-theme="dark"] .i-moon,
+        :root[data-theme="light"] .i-sun {
+            display: none;
+        }
+
+        @media (max-width: 760px) {
+            .nav-links {
+                display: none;
+            }
+            .nav-actions {
+                margin-left: auto;
+            }
+        }
+
+        /* ---------- Hero ---------- */
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: clamp(56px, 10vw, 120px) 0 clamp(56px, 8vw, 100px);
+        }
+
+        .ghosts {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .ghost {
+            position: absolute;
+            font-family: var(--serif);
+            font-weight: 800;
+            line-height: 1;
+            color: transparent;
+            -webkit-text-stroke: 2px var(--ghost);
+            user-select: none;
+        }
+
+        .g1 {
+            top: 4%;
+            right: -1%;
+            font-size: clamp(10rem, 26vw, 24rem);
+        }
+
+        .g2 {
+            bottom: 2%;
+            right: 24%;
+            font-size: clamp(7rem, 16vw, 15rem);
+        }
+
+        .g3 {
+            bottom: -6%;
+            left: -3%;
+            font-size: clamp(8rem, 20vw, 18rem);
+        }
+
+        .hero-inner {
+            position: relative;
+            z-index: 1;
+        }
+
+        .morph {
+            font-family: var(--serif);
+            font-weight: 800;
+            font-size: clamp(3rem, 13.4vw, 10.5rem);
+            line-height: 1.04;
+            letter-spacing: -.02em;
+            white-space: nowrap;
+            min-height: 1.1em;
+        }
+
+        .slot {
+            display: inline-block;
+            transition: color .3s;
+        }
+
+        :root[data-theme="dark"] .slot.hit {
+            color: var(--c10);
+        }
+
+        :root[data-theme="light"] .slot.hit {
+            box-shadow: inset 0 -.14em 0 var(--c10);
+        }
+
+        .hero-copy {
+            display: grid;
+            grid-template-columns: 1.1fr 1fr;
+            gap: clamp(24px, 5vw, 64px);
+            align-items: start;
+            margin-top: clamp(32px, 5vw, 56px);
+            padding-top: clamp(24px, 3vw, 36px);
+            border-top: 1px solid var(--line);
+        }
+
+        .hero-title {
+            font-family: var(--serif);
+            font-weight: 700;
+            font-size: clamp(1.7rem, 3.6vw, 2.8rem);
+            line-height: 1.12;
+            letter-spacing: -.01em;
+            max-width: 16ch;
+        }
+
+        .hero-sub {
+            color: var(--ink-dim);
+            max-width: 46ch;
+        }
+
+        .hero-cta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        @media (max-width: 760px) {
+            .hero-copy {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ---------- Umumiy bo‘lim ---------- */
+        .section {
+            padding: var(--section-y) 0;
+        }
+
+        .section-head {
+            max-width: 62ch;
+        }
+
+        .section-head h2,
+        .band-head h2,
+        .final h2 {
+            font-family: var(--serif);
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -.01em;
+            font-size: clamp(1.9rem, 4.4vw, 3.2rem);
+        }
+
+        .section-head p {
+            margin-top: 14px;
+            color: var(--ink-dim);
+        }
+
+        /* ---------- Demo ---------- */
+        .modes {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 32px 0 18px;
+        }
+
+        .mode {
+            font: inherit;
+            font-weight: 700;
+            font-size: .95rem;
+            padding: .6rem 1rem;
+            border-radius: 10px;
+            border: 1.5px solid var(--line);
+            background: transparent;
+            color: var(--ink);
+            cursor: pointer;
+            transition: border-color .18s, background-color .18s;
+        }
+
+        .mode:hover {
+            border-color: var(--ink-dim);
+        }
+
+        .mode[aria-pressed="true"] {
+            background: var(--c20);
+            border-color: var(--c20);
+            color: var(--on-accent);
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: clamp(12px, 2vw, 24px);
+        }
+
+        @media (max-width: 760px) {
+            .demo-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+            min-height: 300px;
+            padding: 22px 24px;
+            border-radius: 20px;
+        }
+
+        .panel-in {
+            background: var(--c60-raise);
+            border: 1px solid var(--line);
+        }
+
+        .panel-out {
+            background: var(--c20);
+            color: var(--on-accent);
+        }
+
+        .panel-in:focus-within {
+            outline: 3px solid var(--c10);
+            outline-offset: 3px;
+        }
+
+        .panel-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-height: 32px;
+            margin-bottom: 10px;
+        }
+
+        .panel-title {
+            font-weight: 800;
+            font-size: .95rem;
+        }
+
+        .panel textarea {
+            flex: 1;
+            width: 100%;
+            min-height: 210px;
+            background: transparent;
+            border: 0;
+            outline: none;
+            resize: none;
+            color: inherit;
+            font: inherit;
+            font-size: 1.125rem;
+            line-height: 1.7;
+            padding: 0;
+        }
+
+        .panel-in textarea::placeholder {
+            color: var(--ink-dim);
+        }
+
+        .copy {
+            margin-left: auto;
+            font: inherit;
+            font-weight: 800;
+            font-size: .85rem;
+            padding: .4rem .9rem;
+            border-radius: 8px;
+            border: 0;
+            background: var(--on-accent);
+            color: #fff;
+            cursor: pointer;
+            transition: opacity .18s;
+        }
+
+        .copy:hover {
+            opacity: .85;
+        }
+
+        .panel-out :focus-visible,
+        .band :focus-visible {
+            outline-color: var(--on-accent);
+        }
+
+        .demo-foot {
+            margin-top: 20px;
+            color: var(--ink-dim);
+        }
+
+        .demo-foot a {
+            font-weight: 800;
+            color: var(--ink);
+        }
+
+        /* ---------- Alifbo kitobi ---------- */
+        .book {
+            margin-top: 44px;
+        }
+
+        .spread {
+            position: relative;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            perspective: 2400px;
+        }
+
+        .page {
+            padding: clamp(18px, 3vw, 40px);
+        }
+
+        .page-left {
+            position: relative;
+            z-index: 1;
+            background: var(--c60-raise);
+            border: 1px solid var(--line);
+            border-right: 0;
+            border-radius: 8px 0 0 8px;
+            box-shadow: inset -26px 0 30px -22px rgba(0, 0, 0, .4);
+        }
+
+        .page-turn {
+            position: relative;
+            z-index: 2;
+            transform-style: preserve-3d;
+            transform-origin: left center;
+        }
+
+        .face {
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+        }
+
+        .page-right {
+            height: 100%;
+            background: var(--c20);
+            color: var(--on-accent);
+            border-radius: 0 8px 8px 0;
+            box-shadow: inset 26px 0 30px -22px rgba(0, 0, 0, .3);
+        }
+
+        .page-back {
+            position: absolute;
+            inset: 0;
+            transform: rotateY(180deg);
+            background: #17958A;
+            border-radius: 8px 0 0 8px;
+        }
+
+        .page-title {
+            font-weight: 800;
+            font-size: .95rem;
+            margin-bottom: clamp(12px, 2vw, 22px);
+        }
+
+        .letters {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: clamp(6px, 1.2vw, 14px);
+        }
+
+        .letter {
+            display: grid;
+            place-items: center;
+            aspect-ratio: 1;
+            border-radius: 6px;
+            font-family: var(--serif);
+            font-weight: 700;
+            font-size: clamp(1.5rem, 4.2vw, 3.3rem);
+            transition: background-color .18s, color .18s, transform .18s;
+        }
+
+        .letter.on {
+            background: var(--c10);
+            color: var(--on-accent);
+            transform: scale(1.08);
+        }
+
+        .book-caption {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: clamp(16px, 4vw, 40px);
+            min-height: 5.5rem;
+            margin-top: 22px;
+            color: var(--ink-dim);
+        }
+
+        .cap-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cap-item b {
+            font-family: var(--serif);
+            font-size: 2.2rem;
+            line-height: 1.1;
+            color: var(--ink);
+        }
+
+        .cap-item small {
+            font-size: .85rem;
+            font-weight: 600;
+        }
+
+        :root[data-theme="dark"] .cap-new b {
+            color: var(--c10);
+        }
+
+        :root[data-theme="light"] .cap-new b {
+            box-shadow: inset 0 -.14em 0 var(--c10);
+        }
+
+        @media (max-width: 760px) {
+            .spread {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+            .page-left,
+            .page-right {
+                border: 1px solid var(--line);
+                border-radius: 8px;
+                box-shadow: none;
+            }
+            .page-right {
+                border: 0;
+            }
+            .page-back {
+                display: none;
+            }
+        }
+
+        /* ---------- Imkoniyatlar (20% band) ---------- */
+        .band {
+            background: var(--c20);
+            color: var(--on-accent);
+            padding: var(--section-y) 0;
+        }
+
+        .band-grid {
+            display: grid;
+            grid-template-columns: 5fr 7fr;
+            gap: clamp(32px, 6vw, 88px);
+        }
+
+        .band-head {
+            position: sticky;
+            top: 100px;
+            align-self: start;
+        }
+
+        .band-head p {
+            margin-top: 14px;
+            max-width: 40ch;
+        }
+
+        .feature {
+            padding: 28px 0;
+            border-top: 1.5px solid rgba(7, 24, 63, .28);
+        }
+
+        .feature:last-child {
+            padding-bottom: 0;
+        }
+
+        .feature h3 {
+            font-family: var(--serif);
+            font-weight: 700;
+            font-size: 1.55rem;
+            line-height: 1.2;
+        }
+
+        .feature p {
+            margin-top: 8px;
+            max-width: 52ch;
+        }
+
+        .chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .chip {
+            padding: .15rem .8rem;
+            border: 1.5px solid currentColor;
+            border-radius: 999px;
+            font-weight: 800;
+            font-size: .82rem;
+        }
+
+        @media (max-width: 860px) {
+            .band-grid {
+                grid-template-columns: 1fr;
+            }
+            .band-head {
+                position: static;
+            }
+        }
+
+        /* ---------- Yakuniy CTA ---------- */
+        .final h2 {
+            font-size: clamp(2.2rem, 6vw, 4.6rem);
+            max-width: 14ch;
+        }
+
+        .final p {
+            margin: 18px 0 30px;
+            max-width: 46ch;
+            color: var(--ink-dim);
+        }
+
+        .foot {
+            border-top: 1px solid var(--line);
+            padding: 28px 0;
+        }
+
+        .foot-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .foot a:not(.logo) {
+            color: var(--ink-dim);
+            font-weight: 600;
+        }
+
+        .foot a:not(.logo):hover {
+            color: var(--ink);
+        }
+    </style>
 </head>
 
-<body class="dark-theme">
-    <div class="background-glow"></div>
-
-    <div class="app-container">
-        <!-- Header: NexUz chapda, Hujjat yuklash va Theme Toggle o'ngda -->
-        <header class="navbar">
-            <div class="logo-group">
-                <div class="logo">Nex<span>Uz</span></div>
-                <div class="badge">ÖĞIR PLATFORMASI</div>
-            </div>
-
-            <div class="header-right">
-                <input type="file" id="fileInput" accept=".pdf, .docx, .txt" hidden>
-                <button class="btn-file" onclick="document.getElementById('fileInput').click()">
-                    📁 Hujjat yuklash (PDF, DOCX, TXT)
+<body>
+    <header class="nav">
+        <div class="wrap nav-inner">
+            <a class="logo" href="#top" aria-label="NexUz — bosh sahifa">Nex<span>Uz</span></a>
+            <nav class="nav-links" aria-label="Bo‘limlar">
+                <a href="#demo">Sinab ko‘ring</a>
+                <a href="#alifbo">Alifbo</a>
+                <a href="#imkoniyatlar">Imkoniyatlar</a>
+                <a href="converter.html#learn">O‘rganish</a>
+            </nav>
+            <div class="nav-actions">
+                <button class="icon-btn" id="themeToggle" type="button" aria-label="Mavzuni almashtirish" title="Mavzuni almashtirish">
+                    <svg class="i-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+                    <svg class="i-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
                 </button>
-
-                <!-- Dark / Light Theme Toggle -->
-                <button id="themeToggleBtn" class="theme-toggle-btn" title="Mavzuni o'zgartirish">
-                    <span id="themeIcon">🌙</span>
-                </button>
-            </div>
-        </header>
-
-        <div id="fileStatus" class="file-status-bar"></div>
-
-        <!-- Yo'nalish va Boshqaruv Qatori -->
-        <div class="top-controls-bar">
-            <div class="mode-select-group">
-                <label for="convertMode">Yo‘nalish:</label>
-                <select id="convertMode" class="custom-select">
-                    <option value="old_to_new">Eski Lotin / Kirill ➔ Yangi Lotin (Ğ, Ö, Ş, Ç)</option>
-                    <option value="new_to_old">Yangi Lotin ➔ Eski Lotin (G', O', Sh, Ch)</option>
-                    <option value="new_to_cyrillic">Yangi Lotin ➔ Kirill (Ғ, Ў, Ш, Ч)</option>
-                </select>
-                <button id="swapBtn" class="btn-swap-inline" title="Yo'nalishni almashtirish">⇄</button>
+                <a class="btn btn-gold btn-sm" href="converter.html">Konverterni ochish</a>
             </div>
         </div>
+    </header>
 
-        <!-- 2 ta Yonma-yon Matn Oynasi -->
-        <main class="converter-grid">
-            <!-- Chap: Kiruvchi Matn -->
-            <div class="glass-card">
-                <div class="card-header">
-                    <span class="card-title">Kiruvchi Matn</span>
-                    <button id="clearBtn" class="btn-icon danger" title="Tozalash">🗑 Tozalash</button>
-                </div>
-                <textarea id="inputText" placeholder="Matnni shu yerga yozing yoki fayl yuklang..."></textarea>
+    <main id="top">
+        <!-- ================= HERO ================= -->
+        <section class="hero">
+            <div class="ghosts" aria-hidden="true">
+                <span class="ghost g1">Ğ</span>
+                <span class="ghost g2">Ş</span>
+                <span class="ghost g3">Ç</span>
             </div>
+            <div class="wrap hero-inner">
+                <div class="morph" id="morph" aria-hidden="true"></div>
+                <span class="sr-only">Ўзбекистон — Özbekiston</span>
 
-            <!-- O'ng: Natija -->
-            <div class="glass-card">
-                <div class="card-header">
-                    <span class="card-title">Natija</span>
-                    <div class="actions">
-                        <button id="copyBtn" class="btn-icon success">📋 Nusxalash</button>
-                        <div class="download-dropdown">
-                            <button class="btn-gradient">📥 Yuklab olish</button>
-                            <div class="dropdown-content">
-                                <a href="#" id="dlDocx">Word (.docx)</a>
-                                <a href="#" id="dlTxt">Text (.txt)</a>
-                            </div>
+                <div class="hero-copy">
+                    <h1 class="hero-title">Eski yozuvni yangi alifboga o‘giring</h1>
+                    <div>
+                        <p class="hero-sub">Kirill yoki eski lotin matnini yozing yoki hujjatni yuklang. NexUz uni yangi lotin alifbosiga — Ğ, Ö, Ş, Ç harflari bilan — o‘girib beradi.</p>
+                        <div class="hero-cta">
+                            <a class="btn btn-gold" href="converter.html">Konverterni ochish</a>
+                            <a class="btn btn-ghost" href="#alifbo">Alifboni ko‘rish</a>
                         </div>
                     </div>
                 </div>
-                <textarea id="outputText" readonly placeholder="Natija avtomatik ko'rinadi..."></textarea>
             </div>
-        </main>
-    </div>
+        </section>
 
-    <script src="app.js"></script>
+        <!-- ================= JONLI DEMO ================= -->
+        <section class="section" id="demo">
+            <div class="wrap">
+                <div class="section-head">
+                    <h2>Yozing — o‘zi o‘giriladi</h2>
+                    <p>Yo‘nalishni tanlang va matnni kiriting. Natija siz yozayotgan paytda chiqadi.</p>
+                </div>
+
+                <div class="modes" role="group" aria-label="Yo‘nalish">
+                    <button class="mode" type="button" data-mode="old_to_new" aria-pressed="true">Eski lotin → yangi lotin</button>
+                    <button class="mode" type="button" data-mode="cyrillic_to_new" aria-pressed="false">Kirill → yangi lotin</button>
+                    <button class="mode" type="button" data-mode="new_to_old" aria-pressed="false">Yangi lotin → eski lotin</button>
+                    <button class="mode" type="button" data-mode="new_to_cyrillic" aria-pressed="false">Yangi lotin → kirill</button>
+                </div>
+
+                <div class="demo-grid">
+                    <div class="panel panel-in">
+                        <div class="panel-bar"><label class="panel-title" for="demoIn">Kiruvchi matn</label><button class="copy" id="copyInputBtn" type="button">Nusxalash</button><button class="copy" id="clearInputBtn" type="button">Tozalash</button></div>
+                        <textarea id="demoIn" spellcheck="false" placeholder="Matnni shu yerga yozing…"></textarea>
+                    </div>
+                    <div class="panel panel-out">
+                        <div class="panel-bar">
+                            <label class="panel-title" for="demoOut" id="outLabel">Yangi lotin</label>
+                            <button class="copy" id="copyBtn" type="button">Nusxalash</button>
+                        </div>
+                        <textarea id="demoOut" readonly spellcheck="false" placeholder="Natija shu yerda ko‘rinadi"></textarea>
+                    </div>
+                </div>
+
+                <p class="demo-foot">PDF, DOCX va TXT fayllar bilan ishlash uchun <a href="converter.html">to‘liq konverterni oching</a>.</p>
+            </div>
+        </section>
+
+        <!-- ================= ALIFBO KITOBI ================= -->
+        <section class="section" id="alifbo" style="padding-top:0">
+            <div class="wrap">
+                <div class="section-head">
+                    <h2>Alifbo kitobi</h2>
+                    <p>O‘giriladigan 16 ta harf. Pastga aylantirganingizda sahifa varaqlanadi: chapda eski yozuv, o‘ngda yangisi. Birinchi qatordagi to‘rt harf — yangi alifboning o‘ziga xos belgilari. Harf ustiga olib borsangiz, ikkala sahifada ham belgilanadi.</p>
+                </div>
+
+                <div class="book" id="book">
+                    <div class="spread">
+                        <div class="page page-left">
+                            <h3 class="page-title">Eski lotin</h3>
+                            <div class="letters" id="lettersCyr" role="list"></div>
+                        </div>
+                        <div class="page-turn" id="pageTurn">
+                            <div class="face page page-right">
+                                <h3 class="page-title">Yangi lotin</h3>
+                                <div class="letters" id="lettersLat" role="list"></div>
+                            </div>
+                            <div class="face page-back" aria-hidden="true"></div>
+                        </div>
+                    </div>
+                    <div class="book-caption" id="caption">Harf ustiga olib boring — eski lotin va yangi lotin shakllari taqqoslanadi. Kirill yozuvi konvertor yo‘nalishlarida alohida ishlaydi.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= IMKONIYATLAR ================= -->
+        <section class="band" id="imkoniyatlar">
+            <div class="wrap band-grid">
+                <div class="band-head">
+                    <h2>Matn ham, hujjat ham</h2>
+                    <p>Qisqa jumla yoki butun hujjat — hammasi bir joyda o‘giriladi.</p>
+                </div>
+                <ul class="feature-list">
+                    <li class="feature"><h3>To‘rtta yangi harf</h3><p>G‘ → Ğ, O‘ → Ö, Sh → Ş va Ch → Ç. Alifbo kitobida eski lotin va yangi lotin yonma-yon taqqoslanadi.</p><div class="chips"><span class="chip">Ğ</span><span class="chip">Ö</span><span class="chip">Ş</span><span class="chip">Ç</span></div></li>
+                    <li class="feature"><h3>To‘rt konvertatsiya yo‘nalishi</h3><p>Eski lotin → yangi lotin, kirill → yangi lotin, yangi lotin → eski lotin va yangi lotin → kirill.</p></li>
+                    <li class="feature"><h3>Word formatini saqlash</h3><p>DOCX ichidagi matn almashtiriladi; jadvallar, rasmlar va hujjatning asosiy tuzilmasi saqlanadi.</p><div class="chips"><span class="chip">DOCX</span><span class="chip">PDF</span><span class="chip">TXT</span></div></li>
+                    <li class="feature"><h3>O‘zgargan harflar ajralib turadi</h3><p>Natijada yangi alifboga o‘tgan Ğ, Ö, Ş va Ç harflari rang bilan belgilanadi.</p></li>
+                    <li class="feature"><h3>So‘z istisnolari</h3><p>“Yoqut” kabi so‘zlar uchun maxsus lug‘at qoidalari qo‘llanadi.</p></li>
+                    <li class="feature"><h3>Tarix va ulashish</h3><p>Oxirgi konvertatsiyalar brauzerda saqlanadi. Matnni havola orqali ulashish mumkin.</p></li>
+                    <li class="feature"><h3>Alifboni o‘rganish</h3><p>Kun harfi va mini-test yordamida yangi harflarni mashq qiling.</p></li>
+                    <li class="feature"><h3>Telegram bilan ishlash</h3><p>Telegram uchun tayyor matn nusxalanadi. Botni ham umumiy konvertatsiya qoidalariga ulash mumkin.</p></li>
+                </ul>
+            </div>
+        </section>
+
+        <!-- ================= YAKUNIY CTA ================= -->
+        <section class="section final">
+            <div class="wrap">
+                <h2>Birinchi matningizni o‘giring</h2>
+                <p>Ro‘yxatdan o‘tish shart emas. Konverterni oching, matn yozing yoki hujjat yuklang.</p>
+                <a class="btn btn-gold btn-lg" href="converter.html">Konverterni ochish</a>
+            </div>
+        </section>
+    </main>
+
+    <footer class="foot">
+        <div class="wrap foot-inner">
+            <a class="logo" href="#top">Nex<span>Uz</span></a>
+            <a href="https://github.com/Anvarbek05/uzbek-converter" rel="noopener">Kodni GitHub’da ko‘rish</a>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script>
+        (function() {
+            'use strict';
+
+            /* ---------- Mavzu (dark / light) ---------- */
+            var root = document.documentElement;
+            document.getElementById('themeToggle').addEventListener('click', function() {
+                var next = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                root.setAttribute('data-theme', next);
+                try { localStorage.setItem('nexuz-theme', next); } catch (e) {}
+            });
+
+            /* @converter-start
+               server.js dagi o‘girish qoidalarining brauzerdagi nusxasi (demo uchun).
+               Yangi lotin → kirill xaritasiga Q/q → Қ/қ qo‘shilgan. */
+            function applyPairs(text, pairs) {
+                return pairs.reduce(function(s, p) { return s.split(p[0]).join(p[1]); }, text);
+            }
+
+            var OLD2NEW = [
+                ['Ғ', 'Ğ'], ['ғ', 'ğ'], ['Ў', 'Ö'], ['ў', 'ö'], ['Ш', 'Ş'], ['ш', 'ş'], ['Ч', 'Ç'], ['ч', 'ç'],
+                ['Қ', 'Q'], ['қ', 'q'],
+                ['Ё', 'Yo'], ['ё', 'yo'], ['Ю', 'Yu'], ['ю', 'yu'], ['Я', 'Ya'], ['я', 'ya'],
+                ['Ц', 'Ts'], ['ц', 'ts'], ['Щ', 'Şç'], ['щ', 'şç'],
+                ['А', 'A'], ['а', 'a'], ['Б', 'B'], ['б', 'b'], ['В', 'V'], ['в', 'v'], ['Г', 'G'], ['г', 'g'],
+                ['Д', 'D'], ['д', 'd'], ['Е', 'E'], ['е', 'e'], ['Ж', 'J'], ['ж', 'j'], ['З', 'Z'], ['з', 'z'],
+                ['И', 'I'], ['и', 'i'], ['Й', 'Y'], ['й', 'y'], ['К', 'K'], ['к', 'k'], ['Л', 'L'], ['л', 'l'],
+                ['М', 'M'], ['м', 'm'], ['Н', 'N'], ['н', 'n'], ['О', 'O'], ['о', 'o'], ['П', 'P'], ['п', 'p'],
+                ['Р', 'R'], ['р', 'r'], ['С', 'S'], ['с', 's'], ['Т', 'T'], ['т', 't'], ['У', 'U'], ['у', 'u'],
+                ['Ф', 'F'], ['ф', 'f'], ['Х', 'X'], ['х', 'x'], ['Ҳ', 'H'], ['ҳ', 'h'], ['Э', 'E'], ['э', 'e'],
+                ['Ъ', '‘'], ['ъ', '‘'], ['Ь', ''], ['ь', ''],
+                ['SH', 'Ş'], ['Sh', 'Ş'], ['sh', 'ş'], ['CH', 'Ç'], ['Ch', 'Ç'], ['ch', 'ç'],
+                ['G‘', 'Ğ'], ['g‘', 'ğ'], ['O‘', 'Ö'], ['o‘', 'ö']
+            ];
+
+            function toNewLatin(text) {
+                if (!text) return '';
+                var r = text.replace(/['‘`’]/g, '‘');
+                r = r
+                    .replace(/(^|[\s\n\t,.\?!"'“«(])Е/g, '$1Ye').replace(/(^|[\s\n\t,.\?!"'“«(])е/g, '$1ye')
+                    .replace(/([АEИОУЎЭЮЯаеиоуўэюя‘])Е/g, '$1Ye').replace(/([АEИОУЎЭЮЯаеиоуўэюя‘])е/g, '$1ye');
+                return applyPairs(r, OLD2NEW);
+            }
+
+            function toOldLatin(text) {
+                if (!text) return '';
+                var UP = '[A-ZĞÖIİEOUÁÝÂÊÎÔÛDŽÇŞA-Z]';
+                var r = text
+                    .replace(new RegExp('Ş(?=' + UP + ')', 'g'), 'SH')
+                    .replace(new RegExp('Ç(?=' + UP + ')', 'g'), 'CH')
+                    .replace(new RegExp('Ğ(?=' + UP + ')', 'g'), 'G‘')
+                    .replace(new RegExp('Ö(?=' + UP + ')', 'g'), 'O‘');
+                return applyPairs(r, [
+                    ['Ğ', 'G‘'], ['ğ', 'g‘'], ['Ö', 'O‘'], ['ö', 'o‘'],
+                    ['Ş', 'Sh'], ['ş', 'sh'], ['Ç', 'Ch'], ['ç', 'ch']
+                ]);
+            }
+
+            var NEW2CYR = [
+                ['Ye', 'Е'], ['ye', 'е'], ['Yo', 'Ё'], ['yo', 'ё'], ['Yu', 'Ю'], ['yu', 'ю'], ['Ya', 'Я'], ['ya', 'я'],
+                ['Ts', 'Ц'], ['ts', 'ц'], ['SH', 'Ш'], ['Sh', 'Ш'], ['sh', 'ш'], ['CH', 'Ч'], ['Ch', 'Ч'], ['ch', 'ч'],
+                ['G‘', 'Ғ'], ['g‘', 'ғ'], ['O‘', 'Ў'], ['o‘', 'ў'],
+                ['A', 'А'], ['a', 'а'], ['B', 'Б'], ['b', 'б'], ['V', 'В'], ['v', 'в'], ['G', 'Г'], ['g', 'г'],
+                ['D', 'Д'], ['d', 'д'], ['E', 'Э'], ['e', 'э'], ['J', 'Ж'], ['j', 'ж'], ['Z', 'З'], ['z', 'з'],
+                ['I', 'И'], ['i', 'и'], ['Y', 'Й'], ['y', 'й'], ['K', 'К'], ['k', 'к'], ['L', 'Л'], ['l', 'л'],
+                ['M', 'М'], ['m', 'м'], ['N', 'Н'], ['n', 'н'], ['O', 'О'], ['o', 'о'], ['P', 'П'], ['p', 'п'],
+                ['R', 'Р'], ['r', 'р'], ['S', 'С'], ['s', 'с'], ['T', 'Т'], ['t', 'т'], ['U', 'У'], ['u', 'у'],
+                ['F', 'Ф'], ['f', 'ф'], ['X', 'Х'], ['x', 'х'], ['H', 'Ҳ'], ['h', 'ҳ'], ['‘', 'Ъ'],
+                ['Q', 'Қ'], ['q', 'қ']
+            ];
+
+            function toCyrillic(text) {
+                if (!text) return '';
+                return applyPairs(toOldLatin(text), NEW2CYR);
+            }
+
+            function convert(text, mode) {
+                if (mode === 'new_to_old') return toOldLatin(text);
+                if (mode === 'new_to_cyrillic') return toCyrillic(text);
+                return toNewLatin(text);
+            }
+            /* @converter-end */
+
+            /* ---------- Jonli demo ---------- */
+            var SAMPLE_CYR = 'Ўзбекистон — қадимий ва навқирон ўлка. Ғалаба, шодлик, чорсу.';
+            var SAMPLE_OLD = 'O‘zbekiston — qadimiy va navqiron o‘lka. G‘alaba, shodlik, chorsu.';
+            var SAMPLE_LAT = 'Özbekiston — qadimiy va navqiron ölka. Ğalaba, şodlik, çorsu.';
+            var LABELS = { old_to_new: 'Yangi lotin', cyrillic_to_new: 'Yangi lotin', new_to_old: 'Eski lotin', new_to_cyrillic: 'Kirill' };
+
+            var demoIn = document.getElementById('demoIn');
+            var demoOut = document.getElementById('demoOut');
+            var outLabel = document.getElementById('outLabel');
+            var copyBtn = document.getElementById('copyBtn');
+            document.getElementById('copyInputBtn').addEventListener('click', function() {
+                if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(demoIn.value);
+            });
+            document.getElementById('clearInputBtn').addEventListener('click', function() {
+                demoIn.value = ''; demoOut.value = ''; typed = true;
+            });
+            var modeBtns = Array.prototype.slice.call(document.querySelectorAll('.mode'));
+            var mode = 'old_to_new';
+            var typed = false;
+
+            var demoRequest = 0;
+            function runDemo() {
+                var request = ++demoRequest;
+                fetch('/api/convert-text', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: demoIn.value, mode: mode }) })
+                    .then(function(response) { return response.json(); })
+                    .then(function(data) { if (request === demoRequest) demoOut.value = data.result || ''; })
+                    .catch(function() { if (request === demoRequest) demoOut.value = 'Konvertatsiya vaqtincha ishlamadi.'; });
+            }
+
+            demoIn.value = SAMPLE_OLD;
+            runDemo();
+
+            demoIn.addEventListener('input', function() {
+                typed = true;
+                runDemo();
+            });
+
+            modeBtns.forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    mode = btn.getAttribute('data-mode');
+                    modeBtns.forEach(function(b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
+                    outLabel.textContent = LABELS[mode];
+                    if (!typed) demoIn.value = mode === 'cyrillic_to_new' ? SAMPLE_CYR : (mode === 'old_to_new' ? SAMPLE_OLD : SAMPLE_LAT);
+                    runDemo();
+                });
+            });
+
+            var copyTimer;
+            copyBtn.addEventListener('click', function() {
+                if (!demoOut.value) return;
+                var done = function() {
+                    copyBtn.textContent = 'Nusxalandi';
+                    clearTimeout(copyTimer);
+                    copyTimer = setTimeout(function() { copyBtn.textContent = 'Nusxalash'; }, 1600);
+                };
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(demoOut.value).then(done, function() {
+                        demoOut.select();
+                        document.execCommand('copy');
+                        done();
+                    });
+                } else {
+                    demoOut.select();
+                    document.execCommand('copy');
+                    done();
+                }
+            });
+
+            /* ---------- Alifbo kitobi: harflar ---------- */
+            var LETTERS = [
+                ['Ғ', 'G‘', 'Ğ'], ['Ў', 'O‘', 'Ö'], ['Ш', 'Sh', 'Ş'], ['Ч', 'Ch', 'Ç'],
+                ['Қ', 'Q', 'Q'], ['Ҳ', 'H', 'H'], ['Ё', 'Yo', 'Yo'], ['Ю', 'Yu', 'Yu'],
+                ['Я', 'Ya', 'Ya'], ['Ц', 'Ts', 'Ts'], ['Щ', 'Shch', 'Şç'], ['Ъ', '‘', '‘'],
+                ['Ж', 'J', 'J'], ['Х', 'X', 'X'], ['Й', 'Y', 'Y'], ['Э', 'E', 'E']
+            ];
+
+            var lettersCyr = document.getElementById('lettersCyr');
+            var lettersLat = document.getElementById('lettersLat');
+
+            LETTERS.forEach(function(row, i) {
+                [
+                    [lettersCyr, row[1]],
+                    [lettersLat, row[2]]
+                ].forEach(function(pair) {
+                    var d = document.createElement('div');
+                    d.className = 'letter';
+                    d.setAttribute('data-i', i);
+                    d.setAttribute('role', 'listitem');
+                    d.tabIndex = 0;
+                    d.setAttribute('aria-label', 'Eski lotinda ' + row[1] + ', yangi lotinda ' + row[2]);
+                    d.textContent = pair[1];
+                    pair[0].appendChild(d);
+                });
+            });
+
+            var book = document.getElementById('book');
+            var cap = document.getElementById('caption');
+            var capDefault = cap.innerHTML;
+
+            function lettersOn(i) {
+                var r = LETTERS[i];
+                Array.prototype.forEach.call(book.querySelectorAll('.letter[data-i="' + i + '"]'), function(e) { e.classList.add('on'); });
+                cap.innerHTML =
+                    '<span class="cap-item"><b>' + r[1] + '</b><small>eski lotin</small></span>' +
+                    '<span class="cap-item cap-new"><b>' + r[2] + '</b><small>yangi lotin</small></span>';
+            }
+
+            function lettersOff() {
+                Array.prototype.forEach.call(book.querySelectorAll('.letter.on'), function(e) { e.classList.remove('on'); });
+                cap.innerHTML = capDefault;
+            }
+
+            book.addEventListener('pointerover', function(e) {
+                var l = e.target.closest('.letter');
+                if (l) lettersOn(+l.getAttribute('data-i'));
+            });
+            book.addEventListener('pointerout', function(e) { if (e.target.closest('.letter')) lettersOff(); });
+            book.addEventListener('focusin', function(e) {
+                var l = e.target.closest('.letter');
+                if (l) lettersOn(+l.getAttribute('data-i'));
+            });
+            book.addEventListener('focusout', function(e) { if (e.target.closest('.letter')) lettersOff(); });
+
+            /* ---------- Hero: harfma-harf aylanadigan so‘z ---------- */
+            var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+            var morph = document.getElementById('morph');
+            var SPECIAL = /[ĞÖŞÇğöşç]/;
+            var WORDS = ['Ўзбекистон', 'Ғалаба', 'Шаҳар', 'Чорсу'].map(function(c) { return { c: c, l: toNewLatin(c) }; });
+
+            function setSlot(s, ch) {
+                s.textContent = ch;
+                s.classList.toggle('hit', SPECIAL.test(ch));
+            }
+
+            function render(text) {
+                morph.textContent = '';
+                Array.prototype.forEach.call(text, function(ch) {
+                    var s = document.createElement('span');
+                    s.className = 'slot';
+                    setSlot(s, ch);
+                    morph.appendChild(s);
+                });
+                return Array.prototype.slice.call(morph.children);
+            }
+
+            var hasGsap = typeof window.gsap !== 'undefined';
+
+            if (!hasGsap || reduce) {
+                render(WORDS[0].l);
+            } else {
+                var hasST = typeof window.ScrollTrigger !== 'undefined';
+                if (hasST) gsap.registerPlugin(ScrollTrigger);
+
+                var idx = 0;
+
+                var enter = function() {
+                    var slots = render(WORDS[idx].c);
+                    gsap.set(slots, { transformPerspective: 700 });
+                    gsap.fromTo(slots, { rotationX: -90, opacity: 0 }, {
+                        rotationX: 0,
+                        opacity: 1,
+                        duration: .55,
+                        ease: 'back.out(1.6)',
+                        stagger: .05,
+                        onComplete: function() { gsap.delayedCall(1.4, toLatin); }
+                    });
+                };
+
+                var toLatin = function() {
+                    var slots = Array.prototype.slice.call(morph.children);
+                    var chars = Array.prototype.slice.call(WORDS[idx].l);
+                    var tl = gsap.timeline({ onComplete: function() { gsap.delayedCall(2.6, leave); } });
+                    slots.forEach(function(s, i) {
+                        var t = i * .07;
+                        tl.to(s, { rotationX: 90, duration: .22, ease: 'power2.in' }, t)
+                            .add(function() { setSlot(s, chars[i]); }, t + .22)
+                            .fromTo(s, { rotationX: -90 }, { rotationX: 0, duration: .4, ease: 'back.out(1.8)', immediateRender: false }, t + .22);
+                    });
+                };
+
+                var leave = function() {
+                    var slots = Array.prototype.slice.call(morph.children);
+                    gsap.to(slots, {
+                        rotationX: 90,
+                        opacity: 0,
+                        duration: .25,
+                        ease: 'power2.in',
+                        stagger: .03,
+                        onComplete: function() {
+                            idx = (idx + 1) % WORDS.length;
+                            enter();
+                        }
+                    });
+                };
+
+                enter();
+
+                // Sahifa ochilganda: sarlavha va tugmalar bir marta kirib keladi
+                gsap.from('.hero-copy > *', { y: 18, opacity: 0, duration: .7, stagger: .12, delay: .6, ease: 'power2.out' });
+
+                if (hasST) {
+                    // Fon harflari scroll bilan sekin siljiydi
+                    gsap.utils.toArray('.ghost').forEach(function(g, i) {
+                        gsap.to(g, {
+                            yPercent: -30 - i * 18,
+                            ease: 'none',
+                            scrollTrigger: { trigger: '.hero', start: 'top top', end: 'bottom top', scrub: true }
+                        });
+                    });
+
+                    // Kitob: scroll bilan o‘ng sahifa varaqlanadi
+                    var mm = gsap.matchMedia();
+                    mm.add('(min-width: 761px)', function() {
+                        gsap.fromTo('#pageTurn', { rotationY: -179 }, {
+                            rotationY: 0,
+                            transformOrigin: 'left center',
+                            ease: 'none',
+                            scrollTrigger: { trigger: '#book', start: 'top 78%', end: 'top 22%', scrub: .6 }
+                        });
+                    });
+
+                    if (document.fonts && document.fonts.ready) {
+                        document.fonts.ready.then(function() { ScrollTrigger.refresh(); });
+                    }
+                }
+            }
+        })();
+    </script>
 </body>
 
 </html>

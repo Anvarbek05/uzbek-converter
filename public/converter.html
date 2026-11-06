@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="uz">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#111022">
+  <meta name="description" content="NexUz — o‘zbek yozuvini yangi lotin alifbosiga o‘girish va o‘rganish platformasi.">
+  <title>NexUz — Yozuvni yangicha his qiling</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="dark-theme">
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="NexUz bosh sahifa"><span class="brand-mark">N</span><span>Nex<span class="brand-accent">Uz</span></span></a>
+    <nav class="main-nav" aria-label="Asosiy navigatsiya">
+      <a href="index.html">Bosh sahifa</a>
+      <a href="#converter">Konvertor</a><a href="#alphabet">Alifbo</a><a href="#learn">O‘rganish</a><a href="#about">Loyiha haqida</a>
+    </nav>
+    <div class="header-actions">
+      <button id="themeToggleBtn" class="icon-button" aria-label="Rang mavzusini almashtirish"><span id="themeIcon">☼</span></button>
+      <a class="header-cta" href="#converter">Sinab ko‘rish <span>↗</span></a>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero section-wrap">
+      <div class="hero-copy">
+        <div class="eyebrow"><span class="pulse-dot"></span> O‘zbek yozuvi uchun yangi tajriba</div>
+        <h1>Yozuvni <span class="gradient-text">yangicha</span><br>his qiling.</h1>
+        <p class="hero-lead">O‘zbek matnlarini yangi lotin yozuviga o‘giring, to‘rtta yangi harfni kashf qiling va alifboni interaktiv tarzda o‘rganing.</p>
+        <div class="hero-actions"><a class="button-primary" href="#converter">Konvertorni ochish <span>→</span></a><a class="button-quiet" href="#alphabet">Alifboni ko‘rish</a></div>
+        <div class="hero-proof"><div class="avatar-stack"><span>Ğ</span><span>Ö</span><span>Ş</span><span>Ç</span></div><span>4 ta o‘ziga xos harf · Bitta qulay platforma</span></div>
+      </div>
+      <div class="hero-visual" aria-label="Yangi alifbo harflari">
+        <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
+        <div class="letter-card letter-main"><small>YANGI ALIFBO</small><strong>ĞÖŞÇ</strong><span>O‘zbek lotin yozuvining yangi ko‘rinishi</span></div>
+        <div class="floating-chip chip-top"><b>Ğ</b><span>G‘ harfining yangi shakli</span></div>
+        <div class="floating-chip chip-bottom"><b>Ş</b><span>Sh → Ş</span></div>
+        <div class="hero-spark spark-one">✳</div><div class="hero-spark spark-two">✦</div>
+      </div>
+    </section>
+
+    <section id="converter" class="section-wrap converter-section">
+      <div class="section-heading">
+        <div><div class="eyebrow">01 / TEZKOR KONVERTATSIYA</div><h2>Matningizga yangi <span class="gradient-text">shakl bering.</span></h2></div>
+        <p>Matn kiriting yoki hujjat yuklang. Natija avtomatik tayyor bo‘ladi.</p>
+      </div>
+      <div class="converter-shell">
+        <div class="converter-toolbar">
+          <div class="mode-select-group"><span class="toolbar-label">YO‘NALISH</span><select id="convertMode" class="custom-select" aria-label="Konvertatsiya yo‘nalishi">
+            <option value="old_to_new">Eski lotin → Yangi lotin</option>
+            <option value="cyrillic_to_new">Kirill → Yangi lotin</option>
+            <option value="new_to_old">Yangi lotin → Eski lotin</option>
+            <option value="new_to_cyrillic">Yangi lotin → Kirill</option>
+          </select><button id="swapBtn" class="swap-button" title="Yo‘nalishni almashtirish" aria-label="Yo‘nalishni almashtirish">⇄</button></div>
+          <div class="toolbar-right"><input type="file" id="fileInput" accept=".pdf,.docx,.txt" hidden><button class="tool-button" id="uploadBtn">＋ Hujjat yuklash</button><button id="clearBtn" class="tool-button subtle">Tozalash</button></div>
+        </div>
+        <div id="fileStatus" class="file-status" role="status"></div>
+        <div class="editor-grid">
+          <article class="editor-panel">
+            <div class="editor-heading"><div><span class="panel-kicker">MANBA</span><h3>Kiruvchi matn</h3></div><button id="copyInputBtn" class="text-button">Nusxalash ↗</button></div>
+            <textarea id="inputText" placeholder="Matningizni shu yerga yozing yoki hujjat yuklang..." spellcheck="false"></textarea>
+            <div class="editor-footer"><span id="inputCount">0 belgi</span><span>Matn avtomatik qayta ishlanadi</span></div>
+          </article>
+          <div class="transfer-mark">→</div>
+          <article class="editor-panel output-panel">
+            <div class="editor-heading"><div><span class="panel-kicker">NATİJA</span><h3>Yangi matn</h3></div><button id="copyBtn" class="text-button accent-text">Natijani nusxalash ↗</button></div>
+            <div id="outputPreview" class="output-preview" aria-live="polite"><span class="empty-state">Natija shu yerda ko‘rinadi...</span></div>
+            <textarea id="outputText" hidden readonly aria-hidden="true"></textarea>
+            <div class="editor-footer"><span id="outputCount">0 belgi</span><span class="change-legend"><i></i> O‘zgargan harflar</span></div>
+          </article>
+        </div>
+        <div class="converter-bottom">
+          <div class="format-actions"><span class="toolbar-label">YUKLAB OLISH</span><button id="dlDocx" class="download-button">DOCX</button><button id="dlTxt" class="download-button">TXT</button><button id="dlPdf" class="download-button">PDF</button><button id="dlTelegram" class="download-button telegram-button">Telegram matni</button></div>
+          <button id="shareBtn" class="share-button">Ulashish havolasini yaratish <span>↗</span></button>
+        </div>
+        <div id="shareStatus" class="share-status" role="status"></div>
+      </div>
+      <p class="privacy-note"><span>✧</span> Matningiz brauzeringiz tarixida saqlanadi. Maxfiy hujjatlarni ulashishdan oldin havolada matn bo‘lishini yodda tuting.</p>
+    </section>
+
+    <section id="alphabet" class="section-wrap alphabet-section">
+      <div class="section-heading">
+        <div><div class="eyebrow">02 / ALIFBO KITOBI</div><h2>To‘rtta harf. <span class="gradient-text">Yangi ifoda.</span></h2></div>
+        <p>Eski lotin yozuvidagi shakllar yangi alifboda qanday ko‘rinishini solishtiring.</p>
+      </div>
+      <div class="alphabet-book">
+        <div class="book-top"><div><span class="panel-kicker">INTERAKTIV ALIFBO</span><h3>Eski lotin <span>↔</span> Yangi lotin</h3></div><span class="book-page">01 — 04</span></div>
+        <div class="alphabet-grid">
+          <div class="alphabet-cell"><span class="letter-index">01</span><div class="letter-pair"><span>G‘ g‘</span><b>Ğ ğ</b></div><p>G‘ harfining yangi shakli</p><small>G‘alaba → Ğalaba</small></div>
+          <div class="alphabet-cell"><span class="letter-index">02</span><div class="letter-pair"><span>O‘ o‘</span><b>Ö ö</b></div><p>O‘ harfining yangi shakli</p><small>O‘zbekiston → Özbekiston</small></div>
+          <div class="alphabet-cell"><span class="letter-index">03</span><div class="letter-pair"><span>Sh sh</span><b>Ş ş</b></div><p>Sh harfining yangi shakli</p><small>Shahar → Şahar</small></div>
+          <div class="alphabet-cell"><span class="letter-index">04</span><div class="letter-pair"><span>Ch ch</span><b>Ç ç</b></div><p>Ch harfining yangi shakli</p><small>Chiroy → Çiroy</small></div>
+        </div>
+        <div class="book-note"><span>✦</span> Alifbo kitobida asosiy taqqoslash eski lotin va yangi lotin yozuvi o‘rtasida beriladi. Kirill yozuvi konvertor yo‘nalishlarida alohida qo‘llanadi.</div>
+      </div>
+    </section>
+
+    <section id="learn" class="section-wrap learn-section">
+      <div class="section-heading">
+        <div><div class="eyebrow">03 / O‘RGANISH MAYDONI</div><h2>O‘rganing. <span class="gradient-text">Sinab ko‘ring.</span></h2></div>
+        <p>Har kuni bitta harf va qisqa savol bilan yangi alifboni o‘zlashtiring.</p>
+      </div>
+      <div class="learning-grid">
+        <article class="daily-card"><div class="card-topline"><span class="panel-kicker">BUGUNGI HARF</span><span class="daily-tag">Kun harfi</span></div><div class="daily-letter" id="dailyLetter">Ğ</div><h3 id="dailyTitle">G‘ → Ğ</h3><p id="dailyDescription">“G‘alaba” so‘zidagi G‘ harfi yangi yozuvda Ğ shaklida yoziladi.</p><button id="nextLetterBtn" class="card-link">Boshqa harfni ko‘rish ↗</button></article>
+        <article class="quiz-card"><div class="card-topline"><span class="panel-kicker">BILIMINGIZNI SINANG</span><span class="quiz-progress" id="quizProgress">1 / 4</span></div><h3 id="quizQuestion">“Sh” harfining yangi shakli qaysi?</h3><div id="quizOptions" class="quiz-options"></div><div id="quizFeedback" class="quiz-feedback" aria-live="polite"></div><button id="nextQuestionBtn" class="button-primary quiz-next" disabled>Keyingi savol <span>→</span></button></article>
+      </div>
+    </section>
+
+    <section id="about" class="section-wrap about-section">
+      <div class="about-panel"><div><div class="eyebrow">NEXUZ HAQIDA</div><h2>Tilimizning ertangi<br><span class="gradient-text">yozuviga bir qadam.</span></h2></div><p>NexUz — o‘zbek yozuvining yangi lotin shakllarini sinash, taqqoslash va o‘rganishga mo‘ljallangan loyiha. Matn, hujjat va kundalik yozish jarayonlarini bitta sodda muhitda birlashtiradi.</p><a href="#converter" class="button-primary">Hozir sinab ko‘ring <span>→</span></a></div>
+      <footer class="site-footer"><a class="brand" href="#top"><span class="brand-mark">N</span><span>Nex<span class="brand-accent">Uz</span></span></a><span>O‘zbek yozuvi uchun yangi tajriba.</span><a href="#top">Yuqoriga ↑</a></footer>
+    </section>
+  </main>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
