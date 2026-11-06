@@ -805,6 +805,97 @@
         .lang-select{height:42px;padding:0 10px;border:1.5px solid var(--line);border-radius:10px;background:transparent;color:var(--ink);font:700 .82rem var(--sans);cursor:pointer}
         .lang-select option{background:var(--c60-raise);color:var(--ink)}
         @media(max-width:760px){.lang-select{height:38px;padding:0 7px}}
+    
+        /* ---------- Alifbo kitobi: harflarni kesilmasdan ko‘rsatish ---------- */
+        .spread {
+            width: 100%;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            align-items: stretch;
+        }
+
+        .spread > .page,
+        .spread > .page-turn,
+        .page-turn > .page {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .page {
+            min-width: 0;
+            padding: clamp(12px, 2vw, 30px);
+        }
+
+        .page-turn {
+            min-width: 0;
+            width: 100%;
+            overflow: visible;
+        }
+
+        .page-right {
+            min-width: 0;
+            width: 100%;
+        }
+
+        .letters {
+            width: 100%;
+            min-width: 0;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            align-items: stretch;
+            gap: clamp(5px, .8vw, 12px);
+        }
+
+        .letter {
+            min-width: 0;
+            width: 100%;
+            min-height: 0;
+            padding: .12em;
+            aspect-ratio: 1 / 1;
+            font-size: clamp(1.05rem, 2.7vw, 2.7rem);
+            line-height: 1.12;
+            text-align: center;
+            overflow-wrap: anywhere;
+            word-break: break-word;
+        }
+
+        .letter.on {
+            transform: scale(1.03);
+        }
+
+        @media (max-width: 760px) {
+            .spread {
+                grid-template-columns: minmax(0, 1fr);
+                gap: 12px;
+            }
+
+            .spread > .page,
+            .spread > .page-turn {
+                min-width: 0;
+                width: 100%;
+            }
+
+            .page-turn {
+                transform: none !important;
+            }
+
+            .page-right {
+                min-height: 0;
+            }
+        }
+
+        @media (max-width: 380px) {
+            .page {
+                padding: 12px;
+            }
+
+            .letters {
+                gap: 5px;
+            }
+
+            .letter {
+                font-size: clamp(1rem, 7vw, 1.65rem);
+            }
+        }
+
     </style>
 </head>
 
