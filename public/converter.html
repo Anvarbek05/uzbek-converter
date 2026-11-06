@@ -29,7 +29,7 @@
     <section class="hero section-wrap">
       <div class="hero-copy">
         <div class="eyebrow"><span class="pulse-dot"></span> <span data-i18n="hero_eyebrow">O‘zbek yozuvi uchun yangi tajriba</span></div>
-        <h1>Yozuvni <span class="gradient-text">yangicha</span><br>his qiling.</h1>
+        <h1 data-i18n-html="converter_hero_title">Yozuvni <span class="gradient-text">yangicha</span><br>his qiling.</h1>
         <p class="hero-lead" data-i18n="hero_lead">O‘zbek matnlarini yangi lotin yozuviga o‘giring, to‘rtta yangi harfni kashf qiling va alifboni interaktiv tarzda o‘rganing.</p>
         <div class="hero-actions"><a class="button-primary" href="#converter" data-i18n="open_converter">Konvertorni ochish <span>→</span></a><a class="button-quiet" href="#alphabet" data-i18n="view_alphabet">Alifboni ko‘rish</a></div>
         <div class="hero-proof"><div class="avatar-stack"><span>Ğ</span><span>Ö</span><span>Ş</span><span>Ç</span></div><span data-i18n="hero_proof">4 ta o‘ziga xos harf · Bitta qulay platforma</span></div>
@@ -45,8 +45,8 @@
 
     <section id="converter" class="section-wrap converter-section">
       <div class="section-heading">
-        <div><div class="eyebrow">01 / TEZKOR KONVERTATSIYA</div><h2>Matningizga yangi <span class="gradient-text">shakl bering.</span></h2></div>
-        <p>Matn kiriting yoki hujjat yuklang. Natija avtomatik tayyor bo‘ladi.</p>
+        <div><div class="eyebrow" data-i18n="quick_convert">01 / TEZKOR KONVERTATSIYA</div><h2 data-i18n-html="converter_title">Matningizga yangi <span class="gradient-text">shakl bering.</span></h2></div>
+        <p data-i18n="converter_sub">Matn kiriting yoki hujjat yuklang. Natija avtomatik tayyor bo‘ladi.</p>
       </div>
       <div class="converter-shell">
         <div class="converter-toolbar">
@@ -84,11 +84,11 @@
 
     <section id="alphabet" class="section-wrap alphabet-section">
       <div class="section-heading">
-        <div><div class="eyebrow">02 / ALIFBO KITOBI</div><h2>To‘rtta harf. <span class="gradient-text">Yangi ifoda.</span></h2></div>
-        <p>Kirill, eski lotin va yangi lotin yozuvlaridagi harf shakllarini solishtiring.</p>
+        <div><div class="eyebrow" data-i18n="alphabet_book">02 / ALIFBO KITOBI</div><h2 data-i18n-html="alphabet_heading">To‘rtta harf. <span class="gradient-text">Yangi ifoda.</span></h2></div>
+        <p data-i18n="alphabet_sub">Kirill, eski lotin va yangi lotin yozuvlaridagi harf shakllarini solishtiring.</p>
       </div>
       <div class="alphabet-book">
-        <div class="book-top"><div><span class="panel-kicker">INTERAKTIV ALIFBO</span><h3>Кирилл <span>↔</span> Eski lotin <span>↔</span> Yangi lotin</h3></div><span class="book-page">01 — 04</span></div>
+        <div class="book-top"><div><span class="panel-kicker" data-i18n="interactive_alphabet">INTERAKTIV ALIFBO</span><h3>Кирилл <span>↔</span> Eski lotin <span>↔</span> Yangi lotin</h3></div><span class="book-page">01 — 04</span></div>
         <div class="alphabet-grid">
           <div class="alphabet-cell"><span class="letter-index">01</span><div class="letter-pair"><span>Кирилл: Ғ ғ</span><span>Eski lotin: G‘ g‘</span><b>Yangi lotin: Ğ ğ</b></div><p>G‘ harfining uch yozuvdagi ko‘rinishi</p><small>Ғалаба → G‘alaba → Ğalaba</small></div>
           <div class="alphabet-cell"><span class="letter-index">02</span><div class="letter-pair"><span>Кирилл: Ў ў</span><span>Eski lotin: O‘ o‘</span><b>Yangi lotin: Ö ö</b></div><p>O‘ harfining uch yozuvdagi ko‘rinishi</p><small>Ўзбекистон → O‘zbekiston → Özbekiston</small></div>
@@ -101,8 +101,8 @@
 
     <section id="learn" class="section-wrap learn-section">
       <div class="section-heading">
-        <div><div class="eyebrow">03 / O‘RGANISH MAYDONI</div><h2>O‘rganing. <span class="gradient-text">Sinab ko‘ring.</span></h2></div>
-        <p>Har kuni bitta harf va qisqa savol bilan yangi alifboni o‘zlashtiring.</p>
+        <div><div class="eyebrow" data-i18n="learning_area">03 / O‘RGANISH MAYDONI</div><h2 data-i18n-html="learn_heading">O‘rganing. <span class="gradient-text">Sinab ko‘ring.</span></h2></div>
+        <p data-i18n="learn_sub">Har kuni bitta harf va qisqa savol bilan yangi alifboni o‘zlashtiring.</p>
       </div>
       <div class="learning-grid">
         <article class="daily-card"><div class="card-topline"><span class="panel-kicker">BUGUNGI HARF</span><span class="daily-tag">Kun harfi</span></div><div class="daily-letter" id="dailyLetter">Ğ</div><h3 id="dailyTitle">G‘ → Ğ</h3><p id="dailyDescription">“G‘alaba” so‘zidagi G‘ harfi yangi yozuvda Ğ shaklida yoziladi.</p><button id="nextLetterBtn" class="card-link">Boshqa harfni ko‘rish ↗</button></article>
@@ -111,7 +111,7 @@
     </section>
 
     <section id="about" class="section-wrap about-section">
-      <div class="about-panel"><div><div class="eyebrow">NEXUZ HAQIDA</div><h2>Tilimizning ertangi<br><span class="gradient-text">yozuviga bir qadam.</span></h2></div><p>NexUz — o‘zbek yozuvining yangi lotin shakllarini sinash, taqqoslash va o‘rganishga mo‘ljallangan loyiha. Matn, hujjat va kundalik yozish jarayonlarini bitta sodda muhitda birlashtiradi.</p><a href="#converter" class="button-primary">Hozir sinab ko‘ring <span>→</span></a></div>
+      <div class="about-panel"><div><div class="eyebrow" data-i18n="about_nexuz">NEXUZ HAQIDA</div><h2>Tilimizning ertangi<br><span class="gradient-text">yozuviga bir qadam.</span></h2></div><p>NexUz — o‘zbek yozuvining yangi lotin shakllarini sinash, taqqoslash va o‘rganishga mo‘ljallangan loyiha. Matn, hujjat va kundalik yozish jarayonlarini bitta sodda muhitda birlashtiradi.</p><a href="#converter" class="button-primary">Hozir sinab ko‘ring <span>→</span></a></div>
       <footer class="site-footer"><a class="brand" href="#top"><span class="brand-mark">N</span><span>Nex<span class="brand-accent">Uz</span></span></a><span>O‘zbek yozuvi uchun yangi tajriba.</span><a href="#top">Yuqoriga ↑</a></footer>
     </section>
   </main>
