@@ -119,7 +119,7 @@ app.post('/api/download-file', async (req, res) => {
 // Telegram bot webhook. Set TELEGRAM_BOT_TOKEN and TELEGRAM_WEBHOOK_SECRET in deployment settings.
 app.post('/api/telegram/webhook', async (req, res) => {
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
-  if (secret && req.get('x-telegram-bot-api-secret-token') !== secret) return res.sendStatus(401);
+  if (!secret || req.get('x-telegram-bot-api-secret-token') !== secret) return res.sendStatus(401);
   res.sendStatus(200);
   const token = process.env.TELEGRAM_BOT_TOKEN;
   const message = req.body && req.body.message;
