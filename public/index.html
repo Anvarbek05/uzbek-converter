@@ -535,8 +535,9 @@
         .spread {
             position: relative;
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             perspective: 2400px;
+            gap: 0;
         }
 
         .page {
@@ -551,6 +552,15 @@
             border-right: 0;
             border-radius: 8px 0 0 8px;
             box-shadow: inset -26px 0 30px -22px rgba(0, 0, 0, .4);
+        }
+
+        .page-middle {
+            position: relative;
+            z-index: 1;
+            background: var(--c60-raise);
+            border: 1px solid var(--line);
+            border-left: 0;
+            border-right: 0;
         }
 
         .page-turn {
@@ -651,11 +661,13 @@
                 gap: 12px;
             }
             .page-left,
+            .page-middle,
             .page-right {
                 border: 1px solid var(--line);
                 border-radius: 8px;
                 box-shadow: none;
             }
+            .page-middle { border: 1px solid var(--line); }
             .page-right {
                 border: 0;
             }
@@ -852,14 +864,18 @@
             <div class="wrap">
                 <div class="section-head">
                     <h2>Alifbo kitobi</h2>
-                    <p>O‘giriladigan 16 ta harf. Pastga aylantirganingizda sahifa varaqlanadi: chapda eski yozuv, o‘ngda yangisi. Birinchi qatordagi to‘rt harf — yangi alifboning o‘ziga xos belgilari. Harf ustiga olib borsangiz, ikkala sahifada ham belgilanadi.</p>
+                    <p>O‘giriladigan 16 ta harf uch yozuvda ko‘rsatiladi: kirill, eski lotin va yangi lotin. Harf ustiga olib boring yoki klaviatura orqali tanlang — uchala shakl bir vaqtda belgilanadi.</p>
                 </div>
 
                 <div class="book" id="book">
                     <div class="spread">
                         <div class="page page-left">
-                            <h3 class="page-title">Eski lotin</h3>
+                            <h3 class="page-title">Кирилл</h3>
                             <div class="letters" id="lettersCyr" role="list"></div>
+                        </div>
+                        <div class="page page-middle">
+                            <h3 class="page-title">Eski lotin</h3>
+                            <div class="letters" id="lettersOld" role="list"></div>
                         </div>
                         <div class="page-turn" id="pageTurn">
                             <div class="face page page-right">
@@ -869,7 +885,7 @@
                             <div class="face page-back" aria-hidden="true"></div>
                         </div>
                     </div>
-                    <div class="book-caption" id="caption">Harf ustiga olib boring — eski lotin va yangi lotin shakllari taqqoslanadi. Kirill yozuvi konvertor yo‘nalishlarida alohida ishlaydi.</div>
+                    <div class="book-caption" id="caption">Harf ustiga olib boring — kirill, eski lotin va yangi lotin shakllari birgalikda taqqoslanadi.</div>
                 </div>
             </div>
         </section>
@@ -1073,11 +1089,13 @@
             ];
 
             var lettersCyr = document.getElementById('lettersCyr');
+            var lettersOld = document.getElementById('lettersOld');
             var lettersLat = document.getElementById('lettersLat');
 
             LETTERS.forEach(function(row, i) {
                 [
-                    [lettersCyr, row[1]],
+                    [lettersCyr, row[0]],
+                    [lettersOld, row[1]],
                     [lettersLat, row[2]]
                 ].forEach(function(pair) {
                     var d = document.createElement('div');
@@ -1085,7 +1103,7 @@
                     d.setAttribute('data-i', i);
                     d.setAttribute('role', 'listitem');
                     d.tabIndex = 0;
-                    d.setAttribute('aria-label', 'Eski lotinda ' + row[1] + ', yangi lotinda ' + row[2]);
+                    d.setAttribute('aria-label', 'Kirill: ' + row[0] + ', eski lotin: ' + row[1] + ', yangi lotin: ' + row[2]);
                     d.textContent = pair[1];
                     pair[0].appendChild(d);
                 });
@@ -1099,6 +1117,7 @@
                 var r = LETTERS[i];
                 Array.prototype.forEach.call(book.querySelectorAll('.letter[data-i="' + i + '"]'), function(e) { e.classList.add('on'); });
                 cap.innerHTML =
+                    '<span class="cap-item"><b>' + r[0] + '</b><small>kirill</small></span>' +
                     '<span class="cap-item"><b>' + r[1] + '</b><small>eski lotin</small></span>' +
                     '<span class="cap-item cap-new"><b>' + r[2] + '</b><small>yangi lotin</small></span>';
             }
@@ -1123,7 +1142,10 @@
             var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
             var morph = document.getElementById('morph');
             var SPECIAL = /[ĞÖŞÇğöşç]/;
-            var WORDS = ['Ўзбекистон', 'Ғалаба', 'Шаҳар', 'Чорсу'].map(function(c) { return { c: c, l: toNewLatin(c) }; });
+            var WORDS = ['Ўзбекистон', 'Ғалаба', 'Шаҳар', 'Чорсу'].map(function(c) {
+                var n = toNewLatin(c);
+                return { c: c, o: toOldLatin(n), l: n };
+            });
 
             function setSlot(s, ch) {
                 s.textContent = ch;
@@ -1144,7 +1166,7 @@
             var hasGsap = typeof window.gsap !== 'undefined';
 
             if (!hasGsap || reduce) {
-                render(WORDS[0].l);
+                render(WORDS[0].c);
             } else {
                 var hasST = typeof window.ScrollTrigger !== 'undefined';
                 if (hasST) gsap.registerPlugin(ScrollTrigger);
@@ -1155,25 +1177,34 @@
                     var slots = render(WORDS[idx].c);
                     gsap.set(slots, { transformPerspective: 700 });
                     gsap.fromTo(slots, { rotationX: -90, opacity: 0 }, {
-                        rotationX: 0,
-                        opacity: 1,
-                        duration: .55,
-                        ease: 'back.out(1.6)',
-                        stagger: .05,
-                        onComplete: function() { gsap.delayedCall(1.4, toLatin); }
+                        rotationX: 0, opacity: 1, duration: .55, ease: 'back.out(1.6)', stagger: .05,
+                        onComplete: function() { gsap.delayedCall(1.2, toOld); }
                     });
                 };
 
-                var toLatin = function() {
-                    var slots = Array.prototype.slice.call(morph.children);
-                    var chars = Array.prototype.slice.call(WORDS[idx].l);
-                    var tl = gsap.timeline({ onComplete: function() { gsap.delayedCall(2.6, leave); } });
-                    slots.forEach(function(s, i) {
-                        var t = i * .07;
-                        tl.to(s, { rotationX: 90, duration: .22, ease: 'power2.in' }, t)
-                            .add(function() { setSlot(s, chars[i]); }, t + .22)
-                            .fromTo(s, { rotationX: -90 }, { rotationX: 0, duration: .4, ease: 'back.out(1.8)', immediateRender: false }, t + .22);
+                // Har bir yozuvning uzunligi farq qilishi mumkin; shu sabab bosqichlar
+                // orasida slotlar qayta yaratiladi va harflar ketma-ket aylanib kiradi.
+                var morphStage = function(text, next) {
+                    var oldSlots = Array.prototype.slice.call(morph.children);
+                    gsap.to(oldSlots, {
+                        rotationX: 90, opacity: 0, duration: .2, stagger: .025, ease: 'power2.in',
+                        onComplete: function() {
+                            var slots = render(text);
+                            gsap.set(slots, { transformPerspective: 700 });
+                            gsap.fromTo(slots, { rotationX: -90, opacity: 0 }, {
+                                rotationX: 0, opacity: 1, duration: .35, stagger: .045,
+                                ease: 'back.out(1.5)', onComplete: next
+                            });
+                        }
                     });
+                };
+
+                var toOld = function() {
+                    morphStage(WORDS[idx].o, function() { gsap.delayedCall(1.2, toNew); });
+                };
+
+                var toNew = function() {
+                    morphStage(WORDS[idx].l, function() { gsap.delayedCall(2.4, leave); });
                 };
 
                 var leave = function() {
