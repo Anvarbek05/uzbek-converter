@@ -56,3 +56,5 @@ h1,h2,.editor-heading h3,.book-top h3,.about-panel h2{font-family:Literata,Georg
 .about-panel{background:linear-gradient(115deg,rgba(31,181,168,.15),rgba(246,190,63,.08));border-color:var(--line)}
 .site-footer{border-top:1px solid var(--line);margin-top:28px}
 @media(max-width:620px){.site-header{height:68px;padding:0 17px}.main-nav{display:none}}
+
+.lang-select{height:38px;padding:0 10px;border:1px solid var(--line);border-radius:10px;background:var(--surface);color:var(--text);font:700 11px Manrope,sans-serif;cursor:pointer}.lang-select option{background:var(--surface);color:var(--text)}
