@@ -836,10 +836,10 @@
                 </div>
 
                 <div class="modes" role="group" aria-label="Yo‘nalish">
-                    <button class="mode" type="button" data-mode="old_to_new" aria-pressed="true">Eski lotin → yangi lotin</button>
-                    <button class="mode" type="button" data-mode="cyrillic_to_new" aria-pressed="false">Kirill → yangi lotin</button>
-                    <button class="mode" type="button" data-mode="new_to_old" aria-pressed="false">Yangi lotin → eski lotin</button>
-                    <button class="mode" type="button" data-mode="new_to_cyrillic" aria-pressed="false">Yangi lotin → kirill</button>
+                    <button class="mode" type="button" data-mode="old_to_new" aria-pressed="true" data-i18n="mode_old_new">Eski lotin → yangi lotin</button>
+                    <button class="mode" type="button" data-mode="cyrillic_to_new" aria-pressed="false" data-i18n="mode_cyr_new">Kirill → yangi lotin</button>
+                    <button class="mode" type="button" data-mode="new_to_old" aria-pressed="false" data-i18n="mode_new_old">Yangi lotin → eski lotin</button>
+                    <button class="mode" type="button" data-mode="new_to_cyrillic" aria-pressed="false" data-i18n="mode_new_cyr">Yangi lotin → kirill</button>
                 </div>
 
                 <div class="demo-grid">
@@ -871,16 +871,16 @@
                 <div class="book" id="book">
                     <div class="spread">
                         <div class="page page-left">
-                            <h3 class="page-title">Кирилл</h3>
+                            <h3 class="page-title" data-i18n="cyrillic">Кирилл</h3>
                             <div class="letters" id="lettersCyr" role="list"></div>
                         </div>
                         <div class="page page-middle">
-                            <h3 class="page-title">Eski lotin</h3>
+                            <h3 class="page-title" data-i18n="old_latin">Eski lotin</h3>
                             <div class="letters" id="lettersOld" role="list"></div>
                         </div>
                         <div class="page-turn" id="pageTurn">
                             <div class="face page page-right">
-                                <h3 class="page-title">Yangi lotin</h3>
+                                <h3 class="page-title" data-i18n="new_latin">Yangi lotin</h3>
                                 <div class="letters" id="lettersLat" role="list"></div>
                             </div>
                             <div class="face page-back" aria-hidden="true"></div>
@@ -899,14 +899,14 @@
                     <p data-i18n="features_sub">Qisqa jumla yoki butun hujjat — hammasi bir joyda o‘giriladi.</p>
                 </div>
                 <ul class="feature-list">
-                    <li class="feature"><h3>To‘rtta yangi harf</h3><p>G‘ → Ğ, O‘ → Ö, Sh → Ş va Ch → Ç. Alifbo kitobida eski lotin va yangi lotin yonma-yon taqqoslanadi.</p><div class="chips"><span class="chip">Ğ</span><span class="chip">Ö</span><span class="chip">Ş</span><span class="chip">Ç</span></div></li>
-                    <li class="feature"><h3>To‘rt konvertatsiya yo‘nalishi</h3><p>Eski lotin → yangi lotin, kirill → yangi lotin, yangi lotin → eski lotin va yangi lotin → kirill.</p></li>
-                    <li class="feature"><h3>Word formatini saqlash</h3><p>DOCX ichidagi matn almashtiriladi; jadvallar, rasmlar va hujjatning asosiy tuzilmasi saqlanadi.</p><div class="chips"><span class="chip">DOCX</span><span class="chip">PDF</span><span class="chip">TXT</span></div></li>
-                    <li class="feature"><h3>O‘zgargan harflar ajralib turadi</h3><p>Natijada yangi alifboga o‘tgan Ğ, Ö, Ş va Ç harflari rang bilan belgilanadi.</p></li>
-                    <li class="feature"><h3>So‘z istisnolari</h3><p>“Yoqut” kabi so‘zlar uchun maxsus lug‘at qoidalari qo‘llanadi.</p></li>
-                    <li class="feature"><h3>Tarix va ulashish</h3><p>Oxirgi konvertatsiyalar brauzerda saqlanadi. Matnni havola orqali ulashish mumkin.</p></li>
-                    <li class="feature"><h3>Alifboni o‘rganish</h3><p>Kun harfi va mini-test yordamida yangi harflarni mashq qiling.</p></li>
-                    <li class="feature"><h3>Telegram bilan ishlash</h3><p>Telegram uchun tayyor matn nusxalanadi. Botni ham umumiy konvertatsiya qoidalariga ulash mumkin.</p></li>
+                    <li class="feature"><h3 data-i18n="feature_letters">To‘rtta yangi harf</h3><p data-i18n="feature_letters_desc">G‘ → Ğ, O‘ → Ö, Sh → Ş va Ch → Ç. Alifbo kitobida eski lotin va yangi lotin yonma-yon taqqoslanadi.</p><div class="chips"><span class="chip">Ğ</span><span class="chip">Ö</span><span class="chip">Ş</span><span class="chip">Ç</span></div></li>
+                    <li class="feature"><h3 data-i18n="feature_modes">To‘rt konvertatsiya yo‘nalishi</h3><p data-i18n="feature_modes_desc">Eski lotin → yangi lotin, kirill → yangi lotin, yangi lotin → eski lotin va yangi lotin → kirill.</p></li>
+                    <li class="feature"><h3 data-i18n="feature_docx">Word formatini saqlash</h3><p data-i18n="feature_docx_desc">DOCX ichidagi matn almashtiriladi; jadvallar, rasmlar va hujjatning asosiy tuzilmasi saqlanadi.</p><div class="chips"><span class="chip">DOCX</span><span class="chip">PDF</span><span class="chip">TXT</span></div></li>
+                    <li class="feature"><h3 data-i18n="feature_highlight">O‘zgargan harflar ajralib turadi</h3><p data-i18n="feature_highlight_desc">Natijada yangi alifboga o‘tgan Ğ, Ö, Ş va Ç harflari rang bilan belgilanadi.</p></li>
+                    <li class="feature"><h3 data-i18n="feature_exceptions">So‘z istisnolari</h3><p data-i18n="feature_exceptions_desc">“Yoqut” kabi so‘zlar uchun maxsus lug‘at qoidalari qo‘llanadi.</p></li>
+                    <li class="feature"><h3 data-i18n="feature_history">Tarix va ulashish</h3><p data-i18n="feature_history_desc">Oxirgi konvertatsiyalar brauzerda saqlanadi. Matnni havola orqali ulashish mumkin.</p></li>
+                    <li class="feature"><h3 data-i18n="feature_learning">Alifboni o‘rganish</h3><p data-i18n="feature_learning_desc">Kun harfi va mini-test yordamida yangi harflarni mashq qiling.</p></li>
+                    <li class="feature"><h3 data-i18n="feature_telegram">Telegram bilan ishlash</h3><p data-i18n="feature_telegram_desc">Telegram uchun tayyor matn nusxalanadi. Botni ham umumiy konvertatsiya qoidalariga ulash mumkin.</p></li>
                 </ul>
             </div>
         </section>
@@ -916,7 +916,7 @@
             <div class="wrap">
                 <h2 data-i18n="final_title">Birinchi matningizni o‘giring</h2>
                 <p data-i18n="final_sub">Ro‘yxatdan o‘tish shart emas. Konverterni oching, matn yozing yoki hujjat yuklang.</p>
-                <a class="btn btn-gold btn-lg" href="converter.html">Konverterni ochish</a>
+                <a class="btn btn-gold btn-lg" href="converter.html" data-i18n="open_converter">Konverterni ochish</a>
             </div>
         </section>
     </main>
@@ -924,7 +924,7 @@
     <footer class="foot">
         <div class="wrap foot-inner">
             <a class="logo" href="#top">Nex<span>Uz</span></a>
-            <a href="https://github.com/Anvarbek05/uzbek-converter" rel="noopener">Kodni GitHub’da ko‘rish</a>
+            <a href="https://github.com/Anvarbek05/uzbek-converter" rel="noopener" data-i18n="github_link">Kodni GitHub’da ko‘rish</a>
         </div>
     </footer>
 
