@@ -26,7 +26,7 @@ PDF funksiyasi hozircha o‘chirib qo‘yilgan. PDF yuklash yoki PDF eksport qil
 
 ## Maxfiy sozlamalar va environment variables
 
-Maxfiy qiymatlarni faqat server muhitida saqlang. Lokal ishlab chiqishda root papkada `.env` faylidan, Render kabi hostingda esa xizmatning Environment/Environment Variables sozlamalaridan foydalaning.
+Maxfiy qiymatlarni faqat server muhitida saqlang. Lokal ishlab chiqishda root papkada `.env` faylini yarating; uni Node.js 20.6+ da `node --env-file=.env server.js` buyrug‘i bilan yuklang. Render kabi hostingda esa xizmatning Environment/Environment Variables sozlamalaridan foydalaning.
 
 1. `.env.example` faylini namuna sifatida ishlating.
 2. Lokal maxfiy qiymatlarni `.env` fayliga yozing.
