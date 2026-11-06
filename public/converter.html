@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="theme-color" content="#111022">
+  <meta name="theme-color" content="#0E2150">
   <meta name="description" content="NexUz — o‘zbek yozuvini yangi lotin alifbosiga o‘girish va o‘rganish platformasi.">
   <title>NexUz — Yozuvni yangicha his qiling</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -11,10 +11,10 @@
   <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500..800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
-<body class="dark-theme">
+<body class="dark-theme" data-theme="dark">
   <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
   <header class="site-header">
-    <a class="brand" href="#top" aria-label="NexUz bosh sahifa"><span class="brand-mark">N</span><span>Nex<span class="brand-accent">Uz</span></span></a>
+    <a class="brand" href="index.html" aria-label="NexUz bosh sahifa">Nex<span class="brand-accent">Uz</span></a>
     <nav class="main-nav" aria-label="Asosiy navigatsiya">
       <a href="index.html" data-i18n="nav_home">Bosh sahifa</a>
       <a href="#converter" data-i18n="nav_converter">Konvertor</a><a href="#alphabet" data-i18n="nav_alphabet">Alifbo</a><a href="#learn" data-i18n="nav_learn">O‘rganish</a><a href="#about" data-i18n="nav_about">Loyiha haqida</a>
@@ -56,7 +56,7 @@
             <option value="new_to_old" data-i18n="mode_new_old">Yangi lotin → Eski lotin</option>
             <option value="new_to_cyrillic" data-i18n="mode_new_cyr">Yangi lotin → Kirill</option>
           </select><button id="swapBtn" class="swap-button" title="Yo‘nalishni almashtirish" aria-label="Yo‘nalishni almashtirish">⇄</button></div>
-          <div class="toolbar-right"><input type="file" id="fileInput" accept=".pdf,.docx,.txt" hidden><button class="tool-button" id="uploadBtn" data-i18n="upload">＋ Hujjat yuklash</button><button id="clearBtn" class="tool-button subtle" data-i18n="clear">Tozalash</button></div>
+          <div class="toolbar-right"><input type="file" id="fileInput" accept=".docx,.txt" hidden><button class="tool-button" id="uploadBtn" data-i18n="upload">＋ Hujjat yuklash</button><button id="clearBtn" class="tool-button subtle" data-i18n="clear">Tozalash</button></div>
         </div>
         <div id="fileStatus" class="file-status" role="status"></div>
         <div class="editor-grid">
@@ -74,7 +74,7 @@
           </article>
         </div>
         <div class="converter-bottom">
-          <div class="format-actions"><span class="toolbar-label" data-i18n="download">YUKLAB OLISH</span><button id="dlDocx" class="download-button">DOCX</button><button id="dlTxt" class="download-button">TXT</button><button id="dlPdf" class="download-button">PDF</button><button id="dlTelegram" class="download-button telegram-button" data-i18n="telegram_copy">Telegram uchun nusxalash</button></div>
+          <div class="format-actions"><span class="toolbar-label" data-i18n="download">YUKLAB OLISH</span><button id="dlDocx" class="download-button">DOCX</button><button id="dlTxt" class="download-button">TXT</button><button id="dlTelegram" class="download-button telegram-button" data-i18n="telegram_copy">Telegram uchun nusxalash</button></div>
           <button id="shareBtn" class="share-button" data-i18n="share_link">Ulashish havolasini yaratish <span>↗</span></button>
         </div>
         <div id="shareStatus" class="share-status" role="status"></div>
@@ -115,7 +115,6 @@
       <footer class="site-footer"><a class="brand" href="#top"><span class="brand-mark">N</span><span>Nex<span class="brand-accent">Uz</span></span></a><span>O‘zbek yozuvi uchun yangi tajriba.</span><a href="#top">Yuqoriga ↑</a></footer>
     </section>
   </main>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="i18n.js"></script>
   <script src="app.js"></script>
 </body>
