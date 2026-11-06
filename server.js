@@ -1,8 +1,6 @@
 const express = require('express');
 const fileUpload = require('express-fileupload');
 const AdmZip = require('adm-zip');
-const pdfParse = require('pdf-parse');
-const PDFDocument = require('pdfkit');
 const path = require('path');
 const { convert } = require('./lib/converter');
 
@@ -65,11 +63,7 @@ app.post('/api/parse-file', async (req, res) => {
     let text = '';
     if (ext === '.txt') text = file.data.toString('utf8');
     else if (ext === '.docx') text = extractDocxText(file.data);
-    else if (ext === '.pdf') {
-      const parsed = await pdfParse(file.data);
-      text = parsed.text || '';
-      if (!text.trim()) return res.status(422).json({ error: 'PDF ichidan matn topilmadi. Fayl skanerlangan bo‘lishi mumkin.' });
-    } else return res.status(415).json({ error: 'Faqat DOCX, PDF va TXT fayllar qabul qilinadi.' });
+    else return res.status(415).json({ error: 'Faqat DOCX va TXT fayllar qabul qilinadi.' });
     res.json({ text, filename: file.name, format: ext.slice(1) });
   } catch (error) {
     console.error('parse-file:', error);
@@ -118,14 +112,6 @@ app.post('/api/download-file', async (req, res) => {
       console.error('download docx:', error);
       return res.status(500).json({ error: 'DOCX yaratishda xatolik.' });
     }
-  }
-  if (format === 'pdf') {
-    res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename*=UTF-8''${encodeURIComponent(base + '_nexuz.pdf')}`);
-    const pdf = new PDFDocument({ margin: 50, size: 'A4', bufferPages: true });
-    pdf.pipe(res);
-    pdf.font('Helvetica').fontSize(11).text(text, { width: 495, align: 'left', lineGap: 5 });
-    return pdf.end();
   }
   return res.status(400).json({ error: 'Noma’lum format.' });
 });
