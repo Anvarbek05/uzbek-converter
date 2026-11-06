@@ -55,9 +55,10 @@ async function triggerConversion(save = true) {
 function scheduleHistorySave() {
   clearTimeout(conversionTimer);
   conversionTimer = setTimeout(() => {
-    if (inputText.value.trim() && outputText.value && inputText.value !== lastSavedValue) {
+    const historySignature = inputText.value + '|' + convertMode.value;
+    if (inputText.value.trim() && outputText.value && historySignature !== lastSavedValue) {
       saveHistory(inputText.value, outputText.value, convertMode.value);
-      lastSavedValue = inputText.value;
+      lastSavedValue = historySignature;
     }
   }, 650);
 }
