@@ -1022,7 +1022,7 @@
             var SAMPLE_CYR = 'Ўзбекистон — қадимий ва навқирон ўлка. Ғалаба, шодлик, чорсу.';
             var SAMPLE_OLD = 'O‘zbekiston — qadimiy va navqiron o‘lka. G‘alaba, shodlik, chorsu.';
             var SAMPLE_LAT = 'Özbekiston — qadimiy va navqiron ölka. Ğalaba, şodlik, çorsu.';
-            var LABELS = { old_to_new: 'Yangi lotin', cyrillic_to_new: 'Yangi lotin', new_to_old: 'Eski lotin', new_to_cyrillic: 'Kirill' };
+            var LABELS = { old_to_new: 'new_latin', cyrillic_to_new: 'new_latin', new_to_old: 'out_old_latin', new_to_cyrillic: 'out_cyrillic' };
 
             var demoIn = document.getElementById('demoIn');
             var demoOut = document.getElementById('demoOut');
@@ -1044,7 +1044,7 @@
                 fetch('/api/convert-text', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: demoIn.value, mode: mode }) })
                     .then(function(response) { return response.json(); })
                     .then(function(data) { if (request === demoRequest) demoOut.value = data.result || ''; })
-                    .catch(function() { if (request === demoRequest) demoOut.value = 'Konvertatsiya vaqtincha ishlamadi.'; });
+                    .catch(function() { if (request === demoRequest) demoOut.value = window.NexUzI18n ? window.NexUzI18n.t('conversion_error') : 'Konvertatsiya vaqtincha ishlamadi.'; });
             }
 
             demoIn.value = SAMPLE_OLD;
@@ -1059,7 +1059,7 @@
                 btn.addEventListener('click', function() {
                     mode = btn.getAttribute('data-mode');
                     modeBtns.forEach(function(b) { b.setAttribute('aria-pressed', b === btn ? 'true' : 'false'); });
-                    outLabel.textContent = LABELS[mode];
+                    outLabel.textContent = window.NexUzI18n ? window.NexUzI18n.t(LABELS[mode]) : LABELS[mode];
                     if (!typed) demoIn.value = mode === 'cyrillic_to_new' ? SAMPLE_CYR : (mode === 'old_to_new' ? SAMPLE_OLD : SAMPLE_LAT);
                     runDemo();
                 });
@@ -1069,9 +1069,10 @@
             copyBtn.addEventListener('click', function() {
                 if (!demoOut.value) return;
                 var done = function() {
-                    copyBtn.textContent = 'Nusxalandi';
+                    var tr = window.NexUzI18n ? window.NexUzI18n.t : function(k) { return k; };
+                    copyBtn.textContent = tr('copied');
                     clearTimeout(copyTimer);
-                    copyTimer = setTimeout(function() { copyBtn.textContent = 'Nusxalash'; }, 1600);
+                    copyTimer = setTimeout(function() { copyBtn.textContent = tr('copy_again'); }, 1600);
                 };
                 if (navigator.clipboard && navigator.clipboard.writeText) {
                     navigator.clipboard.writeText(demoOut.value).then(done, function() {
@@ -1117,18 +1118,22 @@
 
             var book = document.getElementById('book');
             var cap = document.getElementById('caption');
-            var capDefault = cap.innerHTML;
+            var capDefault = window.NexUzI18n ? window.NexUzI18n.t('book_caption') : cap.innerHTML;
+            var activeLetter = -1;
 
             function lettersOn(i) {
                 var r = LETTERS[i];
+                activeLetter = i;
                 Array.prototype.forEach.call(book.querySelectorAll('.letter[data-i="' + i + '"]'), function(e) { e.classList.add('on'); });
+                var tr = window.NexUzI18n ? window.NexUzI18n.t : function(k) { return k; };
                 cap.innerHTML =
-                    '<span class="cap-item"><b>' + r[0] + '</b><small>kirill</small></span>' +
-                    '<span class="cap-item"><b>' + r[1] + '</b><small>eski lotin</small></span>' +
-                    '<span class="cap-item cap-new"><b>' + r[2] + '</b><small>yangi lotin</small></span>';
+                    '<span class="cap-item"><b>' + r[0] + '</b><small>' + tr('cyrillic') + '</small></span>' +
+                    '<span class="cap-item"><b>' + r[1] + '</b><small>' + tr('old_latin') + '</small></span>' +
+                    '<span class="cap-item cap-new"><b>' + r[2] + '</b><small>' + tr('new_latin') + '</small></span>';
             }
 
             function lettersOff() {
+                activeLetter = -1;
                 Array.prototype.forEach.call(book.querySelectorAll('.letter.on'), function(e) { e.classList.remove('on'); });
                 cap.innerHTML = capDefault;
             }
@@ -1143,6 +1148,15 @@
                 if (l) lettersOn(+l.getAttribute('data-i'));
             });
             book.addEventListener('focusout', function(e) { if (e.target.closest('.letter')) lettersOff(); });
+
+
+            window.addEventListener('nexuz:languagechange', function() {
+                var tr = window.NexUzI18n ? window.NexUzI18n.t : function(k) { return k; };
+                outLabel.textContent = tr(LABELS[mode]);
+                copyBtn.textContent = tr('copy');
+                capDefault = tr('book_caption');
+                if (activeLetter >= 0) lettersOn(activeLetter); else cap.innerHTML = capDefault;
+            });
 
             /* ---------- Hero: harfma-harf aylanadigan so‘z ---------- */
             var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
