@@ -16,23 +16,23 @@
   <header class="site-header">
     <a class="brand" href="#top" aria-label="NexUz bosh sahifa"><span class="brand-mark">N</span><span>Nex<span class="brand-accent">Uz</span></span></a>
     <nav class="main-nav" aria-label="Asosiy navigatsiya">
-      <a href="index.html">Bosh sahifa</a>
-      <a href="#converter">Konvertor</a><a href="#alphabet">Alifbo</a><a href="#learn">O‘rganish</a><a href="#about">Loyiha haqida</a>
+      <a href="index.html" data-i18n="nav_home">Bosh sahifa</a>
+      <a href="#converter" data-i18n="nav_converter">Konvertor</a><a href="#alphabet" data-i18n="nav_alphabet">Alifbo</a><a href="#learn" data-i18n="nav_learn">O‘rganish</a><a href="#about" data-i18n="nav_about">Loyiha haqida</a>
     </nav>
-    <div class="header-actions">
+    <div class="header-actions"><label class="sr-only" for="languageSelect">Interface language</label><select class="lang-select" id="languageSelect" aria-label="Interface language"><option value="uz">UZ</option><option value="ru">RU</option><option value="en">EN</option></select>
       <button id="themeToggleBtn" class="icon-button" aria-label="Rang mavzusini almashtirish"><span id="themeIcon">☼</span></button>
-      <a class="header-cta" href="#converter">Sinab ko‘rish <span>↗</span></a>
+      <a class="header-cta" href="#converter" data-i18n="try_now">Sinab ko‘rish <span>↗</span></a>
     </div>
   </header>
 
   <main id="top">
     <section class="hero section-wrap">
       <div class="hero-copy">
-        <div class="eyebrow"><span class="pulse-dot"></span> O‘zbek yozuvi uchun yangi tajriba</div>
+        <div class="eyebrow"><span class="pulse-dot"></span> <span data-i18n="hero_eyebrow">O‘zbek yozuvi uchun yangi tajriba</span></div>
         <h1>Yozuvni <span class="gradient-text">yangicha</span><br>his qiling.</h1>
-        <p class="hero-lead">O‘zbek matnlarini yangi lotin yozuviga o‘giring, to‘rtta yangi harfni kashf qiling va alifboni interaktiv tarzda o‘rganing.</p>
-        <div class="hero-actions"><a class="button-primary" href="#converter">Konvertorni ochish <span>→</span></a><a class="button-quiet" href="#alphabet">Alifboni ko‘rish</a></div>
-        <div class="hero-proof"><div class="avatar-stack"><span>Ğ</span><span>Ö</span><span>Ş</span><span>Ç</span></div><span>4 ta o‘ziga xos harf · Bitta qulay platforma</span></div>
+        <p class="hero-lead" data-i18n="hero_lead">O‘zbek matnlarini yangi lotin yozuviga o‘giring, to‘rtta yangi harfni kashf qiling va alifboni interaktiv tarzda o‘rganing.</p>
+        <div class="hero-actions"><a class="button-primary" href="#converter" data-i18n="open_converter">Konvertorni ochish <span>→</span></a><a class="button-quiet" href="#alphabet" data-i18n="view_alphabet">Alifboni ko‘rish</a></div>
+        <div class="hero-proof"><div class="avatar-stack"><span>Ğ</span><span>Ö</span><span>Ş</span><span>Ç</span></div><span data-i18n="hero_proof">4 ta o‘ziga xos harf · Bitta qulay platforma</span></div>
       </div>
       <div class="hero-visual" aria-label="Yangi alifbo harflari">
         <div class="orbit orbit-a"></div><div class="orbit orbit-b"></div>
@@ -50,36 +50,36 @@
       </div>
       <div class="converter-shell">
         <div class="converter-toolbar">
-          <div class="mode-select-group"><span class="toolbar-label">YO‘NALISH</span><select id="convertMode" class="custom-select" aria-label="Konvertatsiya yo‘nalishi">
+          <div class="mode-select-group"><span class="toolbar-label" data-i18n="direction">YO‘NALISH</span><select id="convertMode" class="custom-select" aria-label="Konvertatsiya yo‘nalishi">
             <option value="old_to_new">Eski lotin → Yangi lotin</option>
             <option value="cyrillic_to_new">Kirill → Yangi lotin</option>
             <option value="new_to_old">Yangi lotin → Eski lotin</option>
             <option value="new_to_cyrillic">Yangi lotin → Kirill</option>
           </select><button id="swapBtn" class="swap-button" title="Yo‘nalishni almashtirish" aria-label="Yo‘nalishni almashtirish">⇄</button></div>
-          <div class="toolbar-right"><input type="file" id="fileInput" accept=".pdf,.docx,.txt" hidden><button class="tool-button" id="uploadBtn">＋ Hujjat yuklash</button><button id="clearBtn" class="tool-button subtle">Tozalash</button></div>
+          <div class="toolbar-right"><input type="file" id="fileInput" accept=".pdf,.docx,.txt" hidden><button class="tool-button" id="uploadBtn" data-i18n="upload">＋ Hujjat yuklash</button><button id="clearBtn" class="tool-button subtle" data-i18n="clear">Tozalash</button></div>
         </div>
         <div id="fileStatus" class="file-status" role="status"></div>
         <div class="editor-grid">
           <article class="editor-panel">
-            <div class="editor-heading"><div><span class="panel-kicker">MANBA</span><h3>Kiruvchi matn</h3></div><button id="copyInputBtn" class="text-button">Nusxalash ↗</button></div>
-            <textarea id="inputText" placeholder="Matningizni shu yerga yozing yoki hujjat yuklang..." spellcheck="false"></textarea>
-            <div class="editor-footer"><span id="inputCount">0 belgi</span><span>Matn avtomatik qayta ishlanadi</span></div>
+            <div class="editor-heading"><div><span class="panel-kicker" data-i18n="source">MANBA</span><h3 data-i18n="input_text">Kiruvchi matn</h3></div><button id="copyInputBtn" class="text-button" data-i18n="copy">Nusxalash ↗</button></div>
+            <textarea id="inputText" placeholder="Matningizni shu yerga yozing yoki hujjat yuklang..." data-i18n-placeholder="input_placeholder" spellcheck="false"></textarea>
+            <div class="editor-footer"><span id="inputCount">0 belgi</span><span data-i18n="auto_process">Matn avtomatik qayta ishlanadi</span></div>
           </article>
           <div class="transfer-mark">→</div>
           <article class="editor-panel output-panel">
-            <div class="editor-heading"><div><span class="panel-kicker">NATİJA</span><h3>Yangi matn</h3></div><button id="copyBtn" class="text-button accent-text">Natijani nusxalash ↗</button></div>
-            <div id="outputPreview" class="output-preview" aria-live="polite"><span class="empty-state">Natija shu yerda ko‘rinadi...</span></div>
+            <div class="editor-heading"><div><span class="panel-kicker" data-i18n="result">NATIJA</span><h3 data-i18n="output_text">Yangi matn</h3></div><button id="copyBtn" class="text-button accent-text" data-i18n="copy_result">Natijani nusxalash ↗</button></div>
+            <div id="outputPreview" class="output-preview" aria-live="polite"><span class="empty-state" data-i18n="output_placeholder">Natija shu yerda ko‘rinadi...</span></div>
             <textarea id="outputText" hidden readonly aria-hidden="true"></textarea>
-            <div class="editor-footer"><span id="outputCount">0 belgi</span><span class="change-legend"><i></i> O‘zgargan harflar</span></div>
+            <div class="editor-footer"><span id="outputCount">0 belgi</span><span class="change-legend"><i></i> <span data-i18n="changed_letters">O‘zgargan harflar</span></span></div>
           </article>
         </div>
         <div class="converter-bottom">
-          <div class="format-actions"><span class="toolbar-label">YUKLAB OLISH</span><button id="dlDocx" class="download-button">DOCX</button><button id="dlTxt" class="download-button">TXT</button><button id="dlPdf" class="download-button">PDF</button><button id="dlTelegram" class="download-button telegram-button">Telegram matni</button></div>
-          <button id="shareBtn" class="share-button">Ulashish havolasini yaratish <span>↗</span></button>
+          <div class="format-actions"><span class="toolbar-label" data-i18n="download">YUKLAB OLISH</span><button id="dlDocx" class="download-button">DOCX</button><button id="dlTxt" class="download-button">TXT</button><button id="dlPdf" class="download-button">PDF</button><button id="dlTelegram" class="download-button telegram-button" data-i18n="telegram_copy">Telegram uchun nusxalash</button></div>
+          <button id="shareBtn" class="share-button" data-i18n="share_link">Ulashish havolasini yaratish <span>↗</span></button>
         </div>
         <div id="shareStatus" class="share-status" role="status"></div>
       </div>
-      <p class="privacy-note"><span>✧</span> Matningiz brauzeringiz tarixida saqlanadi. Maxfiy hujjatlarni ulashishdan oldin havolada matn bo‘lishini yodda tuting.</p>
+      <p class="privacy-note"><span>✧</span> <span data-i18n="privacy_note">Matningiz brauzeringiz tarixida saqlanadi. Maxfiy hujjatlarni ulashishdan oldin havolada matn bo‘lishini yodda tuting.</span></p>
     </section>
 
     <section id="alphabet" class="section-wrap alphabet-section">
@@ -116,6 +116,7 @@
     </section>
   </main>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="i18n.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
