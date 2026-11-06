@@ -9,7 +9,7 @@ npm install
 npm start
 ``
 
-Brauzerda `http://localhost:3000` manzilini oching.
+Brauzerda `http://localhost:3000` manzilini oching. Asosiy sahifa — `public/index.html`; barcha konvertatsiya va o‘rganish vositalari — `public/converter.html` sahifasida.
 
 ## Test
 
