@@ -223,18 +223,6 @@ async function downloadTextFile(format) {
 }
 $('dlDocx').addEventListener('click', () => downloadTextFile('docx'));
 $('dlTxt').addEventListener('click', () => downloadTextFile('txt'));
-$('dlPdf').addEventListener('click', async () => {
-  if (!outputText.value.trim()) return fileStatus.textContent = 'Avval matn kiriting.';
-  if (typeof html2pdf !== 'function') return fileStatus.textContent = 'PDF kutubxonasi yuklanmadi. Internet aloqasini tekshiring.';
-  fileStatus.textContent = 'PDF tayyorlanmoqda...';
-  const paper = document.createElement('div');
-  paper.style.cssText = 'padding:36px;background:#fff;color:#171226;font-family:Arial,sans-serif;font-size:12pt;line-height:1.7;white-space:pre-wrap;overflow-wrap:anywhere;width:720px';
-  paper.textContent = outputText.value;
-  try {
-    await html2pdf().set({margin:14,filename:'nexuz_natija.pdf',image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(paper).save();
-    fileStatus.textContent = '✓ PDF yuklab olindi';
-  } catch (error) { fileStatus.textContent = 'PDF yaratishda xatolik yuz berdi.'; }
-});
 $('dlTelegram').addEventListener('click', () => {
   if (!outputText.value.trim()) return fileStatus.textContent = 'Avval matn kiriting.';
   copyText('*NexUz orqali o‘girilgan matn*\n\n' + outputText.value, 'Telegram matni');
