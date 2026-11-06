@@ -5,6 +5,7 @@ const cases = [
   ['G‘alaba, O‘zbekiston, Shahar, Chiroy', 'old_to_new', 'Ğalaba, Özbekiston, Şahar, Çiroy'],
   ['Ғалаба, Ўзбекистон, Шаҳар, Чирой', 'cyrillic_to_new', 'Ğalaba, Özbekiston, Şahar, Çiroy'],
   ['Ğalaba, Özbekiston, Şahar, Çiroy', 'new_to_old', 'G‘alaba, O‘zbekiston, Shahar, Chiroy'],
+  ['ŞAXS ÇIROY ĞALABA ÖZBEK', 'new_to_old', 'SHAXS CHIROY G‘ALABA O‘ZBEK'],
   ['Ğalaba, Özbekiston, Şahar, Çiroy', 'new_to_cyrillic', 'Ғалаба, Ўзбекистон, Шаҳар, Чирой'],
   ['Yoqut', 'old_to_new', 'Yoqut'],
   ['Ertak', 'new_to_cyrillic', 'Эртак'],
