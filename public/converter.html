@@ -51,10 +51,10 @@
       <div class="converter-shell">
         <div class="converter-toolbar">
           <div class="mode-select-group"><span class="toolbar-label" data-i18n="direction">YO‘NALISH</span><select id="convertMode" class="custom-select" aria-label="Konvertatsiya yo‘nalishi">
-            <option value="old_to_new">Eski lotin → Yangi lotin</option>
-            <option value="cyrillic_to_new">Kirill → Yangi lotin</option>
-            <option value="new_to_old">Yangi lotin → Eski lotin</option>
-            <option value="new_to_cyrillic">Yangi lotin → Kirill</option>
+            <option value="old_to_new" data-i18n="mode_old_new">Eski lotin → Yangi lotin</option>
+            <option value="cyrillic_to_new" data-i18n="mode_cyr_new">Kirill → Yangi lotin</option>
+            <option value="new_to_old" data-i18n="mode_new_old">Yangi lotin → Eski lotin</option>
+            <option value="new_to_cyrillic" data-i18n="mode_new_cyr">Yangi lotin → Kirill</option>
           </select><button id="swapBtn" class="swap-button" title="Yo‘nalishni almashtirish" aria-label="Yo‘nalishni almashtirish">⇄</button></div>
           <div class="toolbar-right"><input type="file" id="fileInput" accept=".pdf,.docx,.txt" hidden><button class="tool-button" id="uploadBtn" data-i18n="upload">＋ Hujjat yuklash</button><button id="clearBtn" class="tool-button subtle" data-i18n="clear">Tozalash</button></div>
         </div>
@@ -88,12 +88,12 @@
         <p data-i18n="alphabet_sub">Kirill, eski lotin va yangi lotin yozuvlaridagi harf shakllarini solishtiring.</p>
       </div>
       <div class="alphabet-book">
-        <div class="book-top"><div><span class="panel-kicker" data-i18n="interactive_alphabet">INTERAKTIV ALIFBO</span><h3>Кирилл <span>↔</span> Eski lotin <span>↔</span> Yangi lotin</h3></div><span class="book-page">01 — 04</span></div>
+        <div class="book-top"><div><span class="panel-kicker" data-i18n="interactive_alphabet">INTERAKTIV ALIFBO</span><h3 data-i18n-html="alphabet_book_heading">Кирилл <span>↔</span> Eski lotin <span>↔</span> Yangi lotin</h3></div><span class="book-page">01 — 04</span></div>
         <div class="alphabet-grid">
-          <div class="alphabet-cell"><span class="letter-index">01</span><div class="letter-pair"><span>Кирилл: Ғ ғ</span><span>Eski lotin: G‘ g‘</span><b>Yangi lotin: Ğ ğ</b></div><p>G‘ harfining uch yozuvdagi ko‘rinishi</p><small>Ғалаба → G‘alaba → Ğalaba</small></div>
-          <div class="alphabet-cell"><span class="letter-index">02</span><div class="letter-pair"><span>Кирилл: Ў ў</span><span>Eski lotin: O‘ o‘</span><b>Yangi lotin: Ö ö</b></div><p>O‘ harfining uch yozuvdagi ko‘rinishi</p><small>Ўзбекистон → O‘zbekiston → Özbekiston</small></div>
-          <div class="alphabet-cell"><span class="letter-index">03</span><div class="letter-pair"><span>Кирилл: Ш ш</span><span>Eski lotin: Sh sh</span><b>Yangi lotin: Ş ş</b></div><p>Sh harfining uch yozuvdagi ko‘rinishi</p><small>Шаҳар → Shahar → Şahar</small></div>
-          <div class="alphabet-cell"><span class="letter-index">04</span><div class="letter-pair"><span>Кирилл: Ч ч</span><span>Eski lotin: Ch ch</span><b>Yangi lotin: Ç ç</b></div><p>Ch harfining uch yozuvdagi ko‘rinishi</p><small>Чирой → Chiroy → Çiroy</small></div>
+          <div class="alphabet-cell"><span class="letter-index">01</span><div class="letter-pair"><span>Кирилл: Ғ ғ</span><span>Eski lotin: G‘ g‘</span><b>Yangi lotin: Ğ ğ</b></div><p data-i18n="letter_g">G‘ harfining uch yozuvdagi ko‘rinishi</p><small data-i18n="example_g">Ғалаба → G‘alaba → Ğalaba</small></div>
+          <div class="alphabet-cell"><span class="letter-index">02</span><div class="letter-pair"><span>Кирилл: Ў ў</span><span>Eski lotin: O‘ o‘</span><b>Yangi lotin: Ö ö</b></div><p data-i18n="letter_o">O‘ harfining uch yozuvdagi ko‘rinishi</p><small data-i18n="example_o">Ўзбекистон → O‘zbekiston → Özbekiston</small></div>
+          <div class="alphabet-cell"><span class="letter-index">03</span><div class="letter-pair"><span>Кирилл: Ш ш</span><span>Eski lotin: Sh sh</span><b>Yangi lotin: Ş ş</b></div><p data-i18n="letter_sh">Sh harfining uch yozuvdagi ko‘rinishi</p><small data-i18n="example_sh">Шаҳар → Shahar → Şahar</small></div>
+          <div class="alphabet-cell"><span class="letter-index">04</span><div class="letter-pair"><span>Кирилл: Ч ч</span><span>Eski lotin: Ch ch</span><b>Yangi lotin: Ç ç</b></div><p data-i18n="letter_ch">Ch harfining uch yozuvdagi ko‘rinishi</p><small data-i18n="example_ch">Чирой → Chiroy → Çiroy</small></div>
         </div>
         <div class="book-note"><span>✦</span> Har bir maxsus harf kirill, eski lotin va yangi lotin yozuvlarida ketma-ket ko‘rsatiladi. Konvertatsiyaning to‘rtta mavjud yo‘nalishi o‘zgarishsiz qoladi.</div>
       </div>
