@@ -92,6 +92,10 @@ function renderHistory() {
       lastSavedValue = '';
       renderHistory();
     });
+  } else {
+    panel.querySelector('.panel-kicker').textContent = tr('history_label', 'BRAUZER TARIXI');
+    panel.querySelector('h3').textContent = tr('history_title', 'Oxirgi konvertatsiyalar');
+    $('clearHistoryBtn').textContent = tr('clear_history', 'Tarixni tozalash');
   }
   const target = $('historyItems');
   const items = getHistory();
