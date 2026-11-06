@@ -538,10 +538,23 @@
             grid-template-columns: repeat(3, minmax(0, 1fr));
             perspective: 2400px;
             gap: 0;
+            width: 100%;
+            min-width: 0;
+        }
+
+        /* Har bir sahifa grid ustunidan tashqariga chiqmasin. */
+        .spread > .page,
+        .spread > .page-turn,
+        .page-turn > .face {
+            width: 100%;
+            min-width: 0;
+            max-width: 100%;
+            box-sizing: border-box;
         }
 
         .page {
-            padding: clamp(18px, 3vw, 40px);
+            min-width: 0;
+            padding: clamp(12px, 2vw, 30px);
         }
 
         .page-left {
@@ -599,18 +612,28 @@
 
         .letters {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: clamp(6px, 1.2vw, 14px);
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: clamp(4px, .8vw, 12px);
+            width: 100%;
+            min-width: 0;
         }
 
         .letter {
             display: grid;
             place-items: center;
+            min-width: 0;
+            max-width: 100%;
             aspect-ratio: 1;
+            padding: 2px;
             border-radius: 6px;
             font-family: var(--serif);
             font-weight: 700;
-            font-size: clamp(1.5rem, 4.2vw, 3.3rem);
+            /* Harflar va Yo, Shch kabi ikki belgili shakllar ham katakka sig‘adi. */
+            font-size: clamp(1.15rem, 2.8vw, 3rem);
+            line-height: 1.05;
+            text-align: center;
+            overflow-wrap: anywhere;
+            word-break: break-word;
             transition: background-color .18s, color .18s, transform .18s;
         }
 
