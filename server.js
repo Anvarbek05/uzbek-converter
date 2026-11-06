@@ -67,7 +67,7 @@ app.post('/api/parse-file', async (req, res) => {
     res.json({ text, filename: file.name, format: ext.slice(1) });
   } catch (error) {
     console.error('parse-file:', error);
-    res.status(422).json({ error: 'Faylni o‘qib bo‘lmadi. DOCX/PDF fayl buzilmaganini tekshiring.' });
+    res.status(422).json({ error: 'Faylni o‘qib bo‘lmadi. DOCX fayl buzilmaganini tekshiring.' });
   }
 });
 
