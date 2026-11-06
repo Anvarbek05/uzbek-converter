@@ -1,4 +1,5 @@
 const $ = (id) => document.getElementById(id);
+const tr = (key, fallback) => window.NexUzI18n ? window.NexUzI18n.t(key) : fallback;
 const inputText = $('inputText');
 const outputText = $('outputText');
 const outputPreview = $('outputPreview');
@@ -18,14 +19,16 @@ function escapeHtml(value) {
   return value.replace(/[&<>"']/g, char => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 }
 function highlightOutput(value) {
-  if (!value) return '<span class="empty-state">Natija shu yerda ko‘rinadi...</span>';
+  if (!value) return '<span class="empty-state">' + tr('output_placeholder', 'Natija shu yerda ko‘rinadi...') + '</span>';
   return Array.from(value).map(char => SPECIAL.test(char)
     ? '<span class="changed-letter">' + escapeHtml(char) + '</span>'
     : escapeHtml(char)).join('');
 }
 function updateCounters() {
-  $('inputCount').textContent = inputText.value.length.toLocaleString('uz-UZ') + ' belgi';
-  $('outputCount').textContent = outputText.value.length.toLocaleString('uz-UZ') + ' belgi';
+  const lang = window.NexUzI18n ? window.NexUzI18n.getLanguage() : 'uz';
+  const locale = lang === 'ru' ? 'ru-RU' : (lang === 'en' ? 'en-US' : 'uz-UZ');
+  $('inputCount').textContent = inputText.value.length.toLocaleString(locale) + ' ' + tr('char_count', 'belgi');
+  $('outputCount').textContent = outputText.value.length.toLocaleString(locale) + ' ' + tr('char_count', 'belgi');
 }
 function renderResult(value) {
   outputText.value = value || '';
@@ -82,23 +85,28 @@ function renderHistory() {
     panel = document.createElement('section');
     panel.id = 'historyPanel';
     panel.className = 'history-panel';
-    panel.innerHTML = '<div class="history-head"><div><span class="panel-kicker">BRAUZER TARIXI</span><h3>Oxirgi konvertatsiyalar</h3></div><button id="clearHistoryBtn" class="text-button">Tarixni tozalash</button></div><div id="historyItems" class="history-items"></div>';
+    panel.innerHTML = '<div class="history-head"><div><span class="panel-kicker">' + tr('history_label','BRAUZER TARIXI') + '</span><h3>' + tr('history_title','Oxirgi konvertatsiyalar') + '</h3></div><button id="clearHistoryBtn" class="text-button">' + tr('clear_history','Tarixni tozalash') + '</button></div><div id="historyItems" class="history-items"></div>';
     $('converter').appendChild(panel);
     $('clearHistoryBtn').addEventListener('click', () => {
       localStorage.removeItem(historyKey);
       lastSavedValue = '';
       renderHistory();
     });
+  } else {
+    panel.querySelector('.panel-kicker').textContent = tr('history_label', 'BRAUZER TARIXI');
+    panel.querySelector('h3').textContent = tr('history_title', 'Oxirgi konvertatsiyalar');
+    $('clearHistoryBtn').textContent = tr('clear_history', 'Tarixni tozalash');
   }
   const target = $('historyItems');
   const items = getHistory();
   if (!items.length) {
-    target.innerHTML = '<span class="history-empty">Hali saqlangan konvertatsiyalar yo‘q.</span>';
+    target.innerHTML = '<span class="history-empty">' + tr('history_empty','Hali saqlangan konvertatsiyalar yo‘q.') + '</span>';
     return;
   }
   target.innerHTML = items.map((item, index) => {
     const preview = escapeHtml(item.source.replace(/\s+/g,' ').slice(0,95));
-    const date = new Date(item.date).toLocaleString('uz-UZ',{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+    const locale = window.NexUzI18n && window.NexUzI18n.getLanguage() === 'ru' ? 'ru-RU' : (window.NexUzI18n && window.NexUzI18n.getLanguage() === 'en' ? 'en-US' : 'uz-UZ');
+    const date = new Date(item.date).toLocaleString(locale,{day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
     return '<button class="history-item" data-history="' + index + '"><span>' + preview + (item.source.length > 95 ? '…' : '') + '</span><small>' + date + '</small></button>';
   }).join('');
   target.querySelectorAll('[data-history]').forEach(button => button.addEventListener('click', () => {
@@ -108,7 +116,7 @@ function renderHistory() {
     originalDocx = null;
     convertMode.value = item.mode;
     renderResult(item.result);
-    fileStatus.textContent = 'Tarixdan tiklandi';
+    fileStatus.textContent = tr('history_restored','Tarixdan tiklandi');
     $('converter').scrollIntoView({behavior:'smooth',block:'start'});
   }));
 }
@@ -261,37 +269,37 @@ loadSharedText();
 
 // Daily letter card
 const letters = [
-  {letter:'Ğ',title:'G‘ → Ğ',description:'“G‘alaba” so‘zidagi G‘ harfi yangi yozuvda Ğ shaklida yoziladi.'},
-  {letter:'Ö',title:'O‘ → Ö',description:'“O‘zbekiston” so‘zidagi O‘ harfi yangi yozuvda Ö shaklida yoziladi.'},
-  {letter:'Ş',title:'Sh → Ş',description:'“Shahar” so‘zidagi Sh harfi yangi yozuvda Ş shaklida yoziladi.'},
-  {letter:'Ç',title:'Ch → Ç',description:'“Chiroy” so‘zidagi Ch harfi yangi yozuvda Ç shaklida yoziladi.'}
+  {letter:'Ğ',title:'daily_title_g',description:'daily_desc_g'},
+  {letter:'Ö',title:'daily_title_o',description:'daily_desc_o'},
+  {letter:'Ş',title:'daily_title_sh',description:'daily_desc_sh'},
+  {letter:'Ç',title:'daily_title_ch',description:'daily_desc_ch'}
 ];
 let dailyIndex = (Math.floor(Date.now()/86400000) % letters.length);
 function renderDaily() {
   const item = letters[dailyIndex];
   $('dailyLetter').textContent = item.letter;
-  $('dailyTitle').textContent = item.title;
-  $('dailyDescription').textContent = item.description;
+  $('dailyTitle').textContent = tr(item.title, item.title);
+  $('dailyDescription').textContent = tr(item.description, item.description);
 }
 $('nextLetterBtn').addEventListener('click', () => { dailyIndex = (dailyIndex + 1) % letters.length; renderDaily(); });
 renderDaily();
 
 // Mini quiz
 const questions = [
-  {q:'“Sh” harfining yangi shakli qaysi?',options:['Ş','Ç','Ğ','Ö'],answer:'Ş'},
-  {q:'“G‘” harfi yangi alifboda qanday yoziladi?',options:['Ö','Ğ','Ş','Ç'],answer:'Ğ'},
-  {q:'“O‘” harfining yangi shaklini toping.',options:['Ç','Ş','Ğ','Ö'],answer:'Ö'},
-  {q:'“Ch” harfi yangi alifboda qaysi belgi bilan yoziladi?',options:['Ğ','Ö','Ç','Ş'],answer:'Ç'}
+  {q:'quiz_q1',options:['Ş','Ç','Ğ','Ö'],answer:'Ş'},
+  {q:'quiz_q2',options:['Ö','Ğ','Ş','Ç'],answer:'Ğ'},
+  {q:'quiz_q3',options:['Ç','Ş','Ğ','Ö'],answer:'Ö'},
+  {q:'quiz_q4',options:['Ğ','Ö','Ç','Ş'],answer:'Ç'}
 ];
 let questionIndex = 0;
 let answered = false;
 function renderQuestion() {
   const q = questions[questionIndex];
   $('quizProgress').textContent = (questionIndex+1) + ' / ' + questions.length;
-  $('quizQuestion').textContent = q.q;
+  $('quizQuestion').textContent = tr(q.q, q.q);
   $('quizFeedback').textContent = '';
   $('nextQuestionBtn').disabled = true;
-  $('nextQuestionBtn').textContent = questionIndex === questions.length-1 ? 'Qayta boshlash ↻' : 'Keyingi savol →';
+  $('nextQuestionBtn').textContent = questionIndex === questions.length-1 ? tr('quiz_restart','Qayta boshlash ↻') : tr('next_question','Keyingi savol →').replace(/<[^>]*>/g,'');
   answered = false;
   $('quizOptions').innerHTML = q.options.map(option => '<button class="quiz-option" type="button" data-answer="' + option + '">' + option + '</button>').join('');
   $('quizOptions').querySelectorAll('[data-answer]').forEach(button => button.addEventListener('click', () => {
@@ -303,7 +311,7 @@ function renderQuestion() {
       option.disabled = true;
       if (option.dataset.answer === q.answer) option.classList.add('correct');
     });
-    $('quizFeedback').textContent = correct ? 'To‘g‘ri! Barakalla.' : 'To‘g‘ri javob: ' + q.answer;
+    $('quizFeedback').textContent = correct ? tr('quiz_correct','To‘g‘ri! Barakalla.') : tr('quiz_answer','To‘g‘ri javob: ') + q.answer;
     $('nextQuestionBtn').disabled = false;
   }));
 }
@@ -311,3 +319,5 @@ $('nextQuestionBtn').addEventListener('click', () => { questionIndex = (question
 renderQuestion();
 renderHistory();
 updateCounters();
+
+window.addEventListener('nexuz:languagechange', () => { renderHistory(); renderDaily(); renderQuestion(); updateCounters(); renderResult(outputText.value); });
